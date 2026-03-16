@@ -42,6 +42,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const [isHovered, setIsHovered] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [removedIngredients, setRemovedIngredients] = useState<string[]>([])
   const [addedIngredients, setAddedIngredients] = useState<string[]>([])
   const [extraIngredients, setExtraIngredients] = useState<Ingredient[]>([])
@@ -56,6 +57,7 @@ export default function ProductCard({ product }: { product: Product }) {
       setSelectedVariant(product.variants.length > 1 ? product.variants[1] : product.variants[0])
     }
     
+    setMounted(true)
     const handleResize = () => setIsMobile(window.innerWidth <= 768)
     handleResize()
     window.addEventListener('resize', handleResize)
@@ -201,7 +203,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      {showModal && (
+      {mounted && showModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowModal(false)}>
           <div style={{ backgroundColor: '#fff', borderRadius: '20px', maxWidth: '900px', width: '100%', maxHeight: '90vh', overflow: 'auto', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#6b6b6b', zIndex: 1 }}>×</button>
