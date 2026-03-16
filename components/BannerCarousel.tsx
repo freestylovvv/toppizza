@@ -12,6 +12,15 @@ type Banner = {
 export default function BannerCarousel({ banners }: { banners: Banner[] }) {
   const [current, setCurrent] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const handleResize = () => setIsMobile(window.innerWidth <= 768)
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     if (banners.length === 0) return
@@ -21,14 +30,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
     return () => clearInterval(timer)
   }, [banners.length])
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768)
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
-  if (banners.length === 0) return null
+  if (!mounted || banners.length === 0) return null
 
   const next = () => setCurrent((prev) => (prev + 1) % banners.length)
   const prev = () => setCurrent((prev) => (prev - 1 + banners.length) % banners.length)
