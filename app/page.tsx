@@ -11,7 +11,7 @@ export default async function Home() {
   const [categoriesRaw, productsRaw, banners] = await Promise.all([
     prisma.category.findMany({ orderBy: { id: 'asc' } }),
     prisma.product.findMany({ include: { category: true, variants: true } }),
-    prisma.banner.findMany({ orderBy: { order: 'asc' } }),
+    prisma.banner.findMany({ orderBy: { order: 'asc' } }).then(b => b.map(x => ({ ...x, subtitle: x.subtitle ?? undefined }))),
   ])
 
   const categories = categoriesRaw
