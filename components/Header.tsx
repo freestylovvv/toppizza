@@ -163,12 +163,7 @@ export default function Header() {
             </div>
           </div>
           
-          <div className="header-categories" style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            height: '48px',
-          }}>
+          <div className="header-categories">
             <nav style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, overflowX: 'auto' }}>
               {categories.map((cat) => (
                 <a
