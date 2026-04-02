@@ -57,12 +57,7 @@ export default function Cart() {
   return (
     <>
       {cart.length > 0 && (
-        <div className="cart-float" style={{
-          position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          zIndex: 200,
-        }}>
+        <div className="cart-float">
           <button
             onClick={() => setIsOpen(true)}
             style={{

@@ -166,38 +166,20 @@ export default function ProductCard({ product }: { product: Product }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={product.imageUrl} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', transition: 'transform 0.3s', transform: isHovered ? 'scale(1.1)' : 'scale(1)' }} />
         </div>
-        <div style={{ padding: '0 8px' }}>
-          <h3 style={{ fontSize: isMobile ? '15px' : '22px', fontWeight: '600', margin: '0 0 8px', color: '#000' }}>{product.name}</h3>
+        <div style={{ padding: '0 4px' }}>
+          <h3 className="product-card-title">{product.name}</h3>
           {(product.requiredIngredients || product.removableIngredients) && (
-            <p style={{ fontSize: isMobile ? '12px' : '14px', color: '#6b6b6b', marginBottom: '16px', lineHeight: '1.4' }}>
+            <p className="product-card-desc">
               {[product.requiredIngredients, product.removableIngredients].filter(Boolean).join(', ')}
             </p>
           )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: isMobile ? '15px' : '20px', fontWeight: '600', color: '#000' }}>от {selectedVariant?.price || 0} ₽</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '4px' }}>
+            <span className="product-card-price">от {selectedVariant?.price || 0} ₽</span>
             <button
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowModal(true)
-              }}
-              style={{
-                padding: isMobile ? '8px 12px' : '10px 24px',
-                backgroundColor: 'rgba(255, 105, 0, 0.1)',
-                color: '#e85d00',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: isMobile ? '13px' : '15px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 105, 0, 0.15)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 105, 0, 0.1)'
-              }}
+              onClick={(e) => { e.stopPropagation(); setShowModal(true) }}
+              className="product-card-btn"
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 105, 0, 0.15)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 105, 0, 0.1)'}
             >
               Выбрать
             </button>
