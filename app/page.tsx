@@ -24,17 +24,11 @@ export default async function Home() {
   return (
     <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', paddingTop: '104px' }}>
       <Header />
-      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px', display: 'flex', gap: '24px' }}>
+      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px' }}>
         <div style={{ flex: 1 }}>
           <BannerCarousel banners={banners} />
 
-          <nav style={{
-            display: 'flex',
-            gap: '8px',
-            marginBottom: '24px',
-            overflowX: 'auto',
-            padding: '8px 0',
-          }}>
+          <nav className="category-nav">
             {categories.map((category) => (
               <a
                 key={category.id}
@@ -57,8 +51,8 @@ export default async function Home() {
 
           {categories.map((category) => (
             <section key={category.id} id={category.name} style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '20px', color: '#000' }}>{category.name}</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+              <h2 className="category-title">{category.name}</h2>
+              <div className="products-grid">
                 {category.products.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}

@@ -52,3 +52,56 @@ input {
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+.category-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding: 8px 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.category-nav::-webkit-scrollbar { display: none; }
+
+.category-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .category-title {
+    font-size: 24px;
+    margin-bottom: 14px;
+  }
+  .products-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Хедер */
+  .header-categories {
+    display: none !important;
+  }
+
+  /* Корзина — кнопка снизу по центру */
+  .cart-float {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    width: auto !important;
+  }
+
+  /* Паддинг страницы */
+  main {
+    padding: 12px 12px !important;
+  }
+}

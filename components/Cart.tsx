@@ -57,7 +57,7 @@ export default function Cart() {
   return (
     <>
       {cart.length > 0 && (
-        <div style={{
+        <div className="cart-float" style={{
           position: 'fixed',
           bottom: '24px',
           right: '24px',
@@ -77,7 +77,9 @@ export default function Cart() {
               boxShadow: '0 8px 24px rgba(255,105,0,0.4)',
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '12px',
+              width: '100%',
               transition: 'all 0.2s',
             }}
             onMouseEnter={(e) => {

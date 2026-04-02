@@ -163,7 +163,7 @@ export default function Header() {
             </div>
           </div>
           
-          <div style={{
+          <div className="header-categories" style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
