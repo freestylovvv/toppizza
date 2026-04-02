@@ -22,7 +22,7 @@ export default async function Home() {
     .filter(cat => cat.products.length > 0)
 
   return (
-    <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', paddingTop: '104px' }}>
+    <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', paddingTop: '104px' }} className="page-root">
       <Header />
       <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px' }}>
         <div style={{ flex: 1 }}>

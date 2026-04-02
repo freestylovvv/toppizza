@@ -53,6 +53,10 @@ input {
   background: #a8a8a8;
 }
 
+.page-root {
+  padding-top: 104px;
+}
+
 .category-nav {
   display: flex;
   gap: 8px;
@@ -78,10 +82,15 @@ input {
 }
 
 @media (max-width: 640px) {
+  .page-root {
+    padding-top: 56px;
+  }
+
   .category-title {
     font-size: 24px;
     margin-bottom: 14px;
   }
+
   .products-grid {
     grid-template-columns: 1fr 1fr;
     gap: 12px;
@@ -102,6 +111,6 @@ input {
 
   /* Паддинг страницы */
   main {
-    padding: 12px 12px !important;
+    padding: 12px !important;
   }
 }

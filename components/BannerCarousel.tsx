@@ -53,14 +53,14 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
             {(banner.title || banner.subtitle) && (
               <>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.3)' }}></div>
-                <div style={{ position: 'absolute', left: '40px', zIndex: 1, maxWidth: '600px' }}>
+                <div style={{ position: 'absolute', left: isMobile ? '16px' : '40px', right: isMobile ? '16px' : '40px', zIndex: 1, maxWidth: '600px' }}>
                   {banner.title && (
-                    <h1 style={{ fontSize: '40px', fontWeight: '700', marginBottom: '12px', color: '#fff', textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
+                    <h1 style={{ fontSize: isMobile ? '22px' : '40px', fontWeight: '700', marginBottom: '12px', color: '#fff', textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}>
                       {banner.title}
                     </h1>
                   )}
                   {banner.subtitle && (
-                    <p style={{ fontSize: '18px', color: '#fff', textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>{banner.subtitle}</p>
+                    <p style={{ fontSize: isMobile ? '13px' : '18px', color: '#fff', textShadow: '0 1px 4px rgba(0,0,0,0.3)' }}>{banner.subtitle}</p>
                   )}
                 </div>
               </>
