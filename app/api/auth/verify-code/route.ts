@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
     let user = await prisma.user.findUnique({ where: { phone: normalized } })
     if (!user) {
-      user = await prisma.user.create({ data: { name, phone: normalized } })
+      user = await prisma.user.create({ data: { name: name || normalized, phone: normalized } })
     }
 
     await prisma.verificationCode.deleteMany({ where: { phone: normalized } })

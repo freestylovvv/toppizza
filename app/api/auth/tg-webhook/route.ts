@@ -26,6 +26,7 @@ export async function POST(request: Request) {
 
     const chatId = message.chat.id.toString()
     const username = message.from?.username?.toLowerCase()
+    const firstName = message.from?.first_name || ''
 
     // Пользователь поделился контактом
     if (message.contact) {
