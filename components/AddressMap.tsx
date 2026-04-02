@@ -60,6 +60,7 @@ export default function AddressMap({ address, onAddressChange }: { address: stri
   return (
     <>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+      <style>{`.leaflet-control-attribution { display: none !important; }`}</style>
       <div ref={containerRef} style={{ width: '100%', height: '200px', marginTop: '12px', borderRadius: '8px', overflow: 'hidden' }} />
     </>
   )

@@ -3,13 +3,14 @@ import { prisma } from '@/lib/prisma'
 
 export async function PUT(request: Request) {
   try {
-    const { id, name, phone, birthday } = await request.json()
+    const { id, name, phone, email, birthday } = await request.json()
 
     const user = await prisma.user.update({
       where: { id },
       data: {
         name,
         phone,
+        email: email || null,
         birthday: birthday ? new Date(birthday) : null,
       },
     })

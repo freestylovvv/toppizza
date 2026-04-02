@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const [month, setMonth] = useState('')
   const [year, setYear] = useState('')
   const [orders, setOrders] = useState<any[]>([])
+  const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function ProfilePage() {
     setUser(userData)
     setName(userData.name)
     setPhone(userData.phone || '')
+    setEmail(userData.email || '')
     
     if (userData.birthday) {
       const date = new Date(userData.birthday)
@@ -84,6 +86,21 @@ export default function ProfilePage() {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: user.id, name: user.name, phone: user.phone, birthday }),
+    })
+    const data = await res.json()
+    if (data.success) {
+      localStorage.setItem('user', JSON.stringify(data.user))
+      setUser(data.user)
+    }
+    setLoading(false)
+  }
+
+  const handleSaveEmail = async () => {
+    setLoading(true)
+    const res = await fetch('/api/user', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: user.id, name: user.name, phone: user.phone, email, birthday: user.birthday }),
     })
     const data = await res.json()
     if (data.success) {
@@ -253,22 +270,38 @@ export default function ProfilePage() {
         </div>
 
         <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px', marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '14px', color: '#6b6b6b', marginBottom: '8px' }}>Почта</label>
+          <label style={{ display: 'block', fontSize: '14px', color: '#6b6b6b', marginBottom: '8px' }}>Email для рассылок (необязательно)</label>
           <input
             type="email"
-            value={user.email}
-            disabled
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="example@mail.ru"
             style={{
               width: '100%',
               padding: '12px',
               border: '1px solid #e0e0e0',
               borderRadius: '8px',
               fontSize: '16px',
-              backgroundColor: '#f9f9f9',
-              color: '#6b6b6b',
+              marginBottom: '12px',
               outline: 'none',
             }}
           />
+          <button
+            onClick={handleSaveEmail}
+            disabled={loading}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#ff6900',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '15px',
+              fontWeight: '500',
+            }}
+          >
+            Сохранить
+          </button>
         </div>
 
         <h2 style={{ fontSize: '28px', fontWeight: '700', marginTop: '48px', marginBottom: '24px', color: '#000' }}>История заказов</h2>

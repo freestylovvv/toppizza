@@ -38,17 +38,25 @@ model Variant {
 model User {
   id        Int      @id @default(autoincrement())
   name      String
-  email     String   @unique
-  phone     String?
+  phone     String   @unique
+  email     String?
   birthday  DateTime?
   isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
   orders    Order[]
 }
 
+model TelegramUser {
+  id         Int      @id @default(autoincrement())
+  username   String?
+  phone      String?  @unique
+  chatId     String   @unique
+  createdAt  DateTime @default(now())
+}
+
 model VerificationCode {
   id        Int      @id @default(autoincrement())
-  email     String
+  phone     String
   code      String
   expiresAt DateTime
   createdAt DateTime @default(now())
