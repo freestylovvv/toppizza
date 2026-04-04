@@ -21,6 +21,14 @@ type Product = {
   variants: Variant[]
 }
 
+type Ingredient = {
+  id: number
+  name: string
+  price: number
+  imageUrl: string
+  categories: string
+}
+
 type SauceProduct = {
   id: number
   name: string
@@ -28,16 +36,9 @@ type SauceProduct = {
   price: number
 }
 
-type Ingredient = {
-  id: number
-  name: string
-  price: number
-  imageUrl: string
-}
-
 const BASE_INGREDIENTS = ['Моцарелла', 'Томатный соус', 'Итальянские травы']
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, allIngredients = [], sauces = [] }: { product: Product; allIngredients?: Ingredient[]; sauces?: SauceProduct[] }) {
   const middleVariant = product.variants.length > 1 ? product.variants[1] : product.variants[0]
   const [selectedVariant, setSelectedVariant] = useState(middleVariant)
   const [isHovered, setIsHovered] = useState(false)
@@ -46,18 +47,19 @@ export default function ProductCard({ product }: { product: Product }) {
   const [mounted, setMounted] = useState(false)
   const [removedIngredients, setRemovedIngredients] = useState<string[]>([])
   const [addedIngredients, setAddedIngredients] = useState<string[]>([])
-  const [extraIngredients, setExtraIngredients] = useState<Ingredient[]>([])
-  const [sauces, setSauces] = useState<SauceProduct[]>([])
-  const [selectedSauces, setSelectedSauces] = useState<number[]>([])
   const productIngredients = product.ingredients ? product.ingredients.split(',').map(i => i.trim()) : []
   const requiredIngredients = product.requiredIngredients ? product.requiredIngredients.split(',').map(i => i.trim()) : []
   const removableIngredients = product.removableIngredients ? product.removableIngredients.split(',').map(i => i.trim()) : []
-  
+
+  const extraIngredients = allIngredients.filter(ing =>
+    ing.categories.split(',').includes(String(product.categoryId))
+  )
+  const [selectedSauces, setSelectedSauces] = useState<number[]>([])
+
   useEffect(() => {
     if (!selectedVariant && product.variants.length > 0) {
       setSelectedVariant(product.variants.length > 1 ? product.variants[1] : product.variants[0])
     }
-    
     setMounted(true)
     const handleResize = () => setIsMobile(window.innerWidth <= 768)
     handleResize()
@@ -65,36 +67,16 @@ export default function ProductCard({ product }: { product: Product }) {
     return () => window.removeEventListener('resize', handleResize)
   }, [product.variants, selectedVariant])
   
-  useEffect(() => {
-    if (showModal && (product.category?.type === 'pizza' || product.category?.type === 'snack')) {
-      fetch(`/api/ingredients?categoryId=${product.categoryId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) setExtraIngredients(data.ingredients)
-        })
-      fetch('/api/products')
-        .then(res => res.json())
-        .then(data => {
-          const sauceProducts = data.filter((p: any) => 
-            p.category?.name?.toLowerCase().includes('соус')
-          ).map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            imageUrl: p.imageUrl,
-            price: p.variants[0]?.price || 0
-          }))
-          setSauces(sauceProducts)
-        })
-    }
-  }, [showModal, product.categoryId, product.category?.type])
-  
   const getImageSize = () => {
     if (!selectedVariant) return '280px'
-    const sizeText = selectedVariant.size.toLowerCase()
-    if (sizeText.includes('маленьк') || sizeText.includes('25')) return '280px'
-    if (sizeText.includes('средн') || sizeText.includes('30')) return '360px'
-    if (sizeText.includes('больш') || sizeText.includes('35')) return '440px'
-    return '360px'
+    const s = selectedVariant.size.toLowerCase()
+    if (s.includes('маленьк')) return '240px'
+    if (s.includes('средн')) return '340px'
+    if (s.includes('больш')) return '440px'
+    if (s.includes('25')) return '240px'
+    if (s.includes('30')) return '340px'
+    if (s.includes('35')) return '440px'
+    return '340px'
   }
 
   const toggleRemoveIngredient = (ing: string) => {
@@ -308,7 +290,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 </>
                 )}
 
-                {(product.category?.type === 'pizza' || product.category?.type === 'snack') && sauces.length > 0 && (
+                {(['pizza', 'snack', 'combo'].includes(product.category?.type)) && sauces.length > 0 && (
                   <div style={{ marginBottom: '20px' }}>
                     <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>Соусы</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>

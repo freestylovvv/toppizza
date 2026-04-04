@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react'
 import AuthModal from './AuthModal'
 import { useRouter } from 'next/navigation'
 
-export default function Header() {
+type HeaderProps = {
+  categories?: { id: number; name: string; anchor?: string }[]
+}
+
+export default function Header({ categories = [] }: HeaderProps) {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [showAuth, setShowAuth] = useState(false)
   const [cartCount, setCartCount] = useState(0)
-  const [categories, setCategories] = useState<any[]>([])
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user')
@@ -23,13 +26,6 @@ export default function Header() {
     
     updateCartCount()
     window.addEventListener('cartUpdated', updateCartCount)
-    
-    fetch('/api/admin/categories')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) setCategories(data.categories)
-      })
-    
     return () => window.removeEventListener('cartUpdated', updateCartCount)
   }, [])
 
@@ -168,7 +164,7 @@ export default function Header() {
               {categories.map((cat) => (
                 <a
                   key={cat.id}
-                  href={`#${cat.name}`}
+                  href={`#${cat.anchor ?? cat.name}`}
                   style={{
                     padding: '8px 12px',
                     fontSize: '15px',

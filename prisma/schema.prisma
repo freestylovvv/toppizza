@@ -36,14 +36,16 @@ model Variant {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  phone     String   @unique
-  email     String?
-  birthday  DateTime?
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  orders    Order[]
+  id              Int      @id @default(autoincrement())
+  name            String
+  phone           String   @unique
+  email           String?
+  encryptedEmail  String?  // Зашифрованный email
+  birthday        DateTime?
+  encryptedBirthday String? // Зашифрованная дата рождения
+  isAdmin         Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  orders          Order[]
 }
 
 model TelegramUser {
@@ -63,18 +65,22 @@ model VerificationCode {
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  fullName   String
-  email      String
-  phone      String
-  address    String
-  comment    String      @default("")
-  totalPrice Int
-  status     String      @default("pending")
-  userId     Int?
-  user       User?       @relation(fields: [userId], references: [id])
-  items      OrderItem[]
-  createdAt  DateTime    @default(now())
+  id                Int         @id @default(autoincrement())
+  fullName          String
+  encryptedFullName String?     // Зашифрованное имя
+  email             String
+  encryptedEmail    String?     // Зашифрованный email
+  phone             String
+  encryptedPhone    String?     // Зашифрованный телефон
+  address           String
+  encryptedAddress  String?     // Зашифрованный адрес
+  comment           String      @default("")
+  totalPrice        Int
+  status            String      @default("pending")
+  userId            Int?
+  user              User?       @relation(fields: [userId], references: [id])
+  items             OrderItem[]
+  createdAt         DateTime    @default(now())
 }
 
 model OrderItem {
@@ -106,4 +112,21 @@ model Ingredient {
   imageUrl   String
   categories String   @default("")
   createdAt  DateTime @default(now())
+}
+
+model Combo {
+  id          Int         @id @default(autoincrement())
+  name        String
+  imageUrl    String
+  discount    Int         @default(0)
+  createdAt   DateTime    @default(now())
+  items       ComboItem[]
+}
+
+model ComboItem {
+  id        Int     @id @default(autoincrement())
+  comboId   Int
+  combo     Combo   @relation(fields: [comboId], references: [id], onDelete: Cascade)
+  productId Int
+  variantId Int
 }

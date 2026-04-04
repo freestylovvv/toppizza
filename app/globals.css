@@ -31,6 +31,138 @@ input {
 ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
 
+/* Summer banner */
+.summer-banner {
+  position: relative;
+  background: linear-gradient(135deg, #ff9a3c 0%, #ffcc02 50%, #ff6f00 100%);
+  border-radius: 20px;
+  padding: 28px 32px 0;
+  margin-bottom: 20px;
+  overflow: hidden;
+  min-height: 120px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.summer-banner-sun {
+  font-size: 52px;
+  flex-shrink: 0;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(255,200,0,0.8));
+}
+
+.summer-banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 4px;
+}
+
+.summer-banner-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  letter-spacing: -0.5px;
+}
+
+.summer-banner-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.9);
+  font-weight: 500;
+}
+
+.summer-banner-emojis {
+  position: absolute;
+  right: 24px;
+  top: 20px;
+  display: flex;
+  gap: 10px;
+  font-size: 28px;
+}
+
+.summer-waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+}
+
+.summer-waves svg {
+  width: 100%;
+  height: 100%;
+}
+
+.wave {
+  fill: rgba(255,255,255,0.15);
+}
+
+.wave1 {}
+
+.wave2 {
+  fill: rgba(255,255,255,0.1);
+}
+
+/* Summer nav links */
+.summer-nav-link {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #fff 0%, #fffbf0 100%);
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #000;
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+  transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(255,150,0,0.08);
+}
+
+.summer-nav-link:hover {
+  border-color: #ff9a3c;
+  color: #e85d00;
+  background: linear-gradient(135deg, #fff8ee 0%, #fff3d6 100%);
+  box-shadow: 0 2px 8px rgba(255,150,0,0.18);
+}
+
+
+
+@media (max-width: 640px) {
+  .summer-banner {
+    padding: 20px 16px 0;
+    min-height: 100px;
+  }
+  .summer-banner-title { font-size: 18px; }
+  .summer-banner-sun { font-size: 36px; }
+  .summer-banner-emojis { font-size: 20px; gap: 6px; right: 12px; top: 14px; }
+  .summer-banner-emojis span:nth-child(n+4) { display: none; }
+}
+
+/* Side decorations */
+.side-deco {
+  position: absolute;
+  top: 104px;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+  overflow: hidden;
+}
+
+.side-deco svg {
+  width: 160px;
+  height: 100%;
+}
+
+.side-deco-left  { left:  calc(50% - 900px); }
+.side-deco-right { right: calc(50% - 900px); }
+
+@media (max-width: 1500px) {
+  .side-deco { display: none; }
+}
+
 /* Layout */
 .page-root {
   padding-top: 104px;

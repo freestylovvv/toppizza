@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import AlertModal from '@/components/AlertModal'
 
-const AddressMap = dynamic(() => import('@/components/AddressMap'), { ssr: false })
+const AddressMap = dynamic(() => import('@/components/AddressMap'), {
+  ssr: false,
+  loading: () => <div style={{ height: '300px', backgroundColor: '#f0f0f0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6b6b6b' }}>Загрузка карты...</div>
+})
 
 type CartItem = {
   productId: number

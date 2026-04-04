@@ -1,0 +1,1 @@
+# План исправления карты в AddressMap\n\n- [x] 1. Создать public/leaflet.css с локальным CSS Leaflet (CSP-safe)\n- [ ] 2. Отредактировать components/AddressMap.tsx (заменить внешний link на локальный)\n- [ ] 3. Протестировать: npm run dev, checkout page, проверить карту и консоль\n- [ ] 4. Завершить задачу

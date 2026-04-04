@@ -14,6 +14,12 @@ export default function AddressMap({ address, onAddressChange }: { address: stri
       
       import('leaflet').then((L) => {
         if (mapRef.current) return
+
+        L.Icon.Default.mergeOptions({
+          iconUrl: '/images/marker-icon.png',
+          iconRetinaUrl: '/images/marker-icon-2x.png',
+          shadowUrl: '/images/marker-shadow.png',
+        })
         
         const map = L.map(containerRef.current!, { attributionControl: false }).setView([55.751244, 37.618423], 13)
         mapRef.current = map
@@ -26,7 +32,8 @@ export default function AddressMap({ address, onAddressChange }: { address: stri
         map.on('click', async (e: any) => {
           marker.setLatLng(e.latlng)
           
-          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+          const response = await fetch(`/api/geocode/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+          if (!response.ok) return
           const data = await response.json()
           if (onAddressChange) onAddressChange(data.display_name || '')
         })
@@ -44,7 +51,7 @@ export default function AddressMap({ address, onAddressChange }: { address: stri
 
   useEffect(() => {
     if (address && mapRef.current && markerRef.current) {
-      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`)
+      fetch(`/api/geocode/search?q=${encodeURIComponent(address)}`)
         .then(res => res.json())
         .then(data => {
           if (data[0]) {
@@ -59,7 +66,7 @@ export default function AddressMap({ address, onAddressChange }: { address: stri
 
   return (
     <>
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+      <link rel="stylesheet" href="/leaflet.css" />
       <style>{`.leaflet-control-attribution { display: none !important; }`}</style>
       <div ref={containerRef} style={{ width: '100%', height: '200px', marginTop: '12px', borderRadius: '8px', overflow: 'hidden' }} />
     </>
