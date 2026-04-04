@@ -4,22 +4,24 @@ import Cart from '@/components/Cart'
 import Footer from '@/components/Footer'
 import BannerCarousel from '@/components/BannerCarousel'
 import { prisma } from '@/lib/prisma'
+import { unstable_cache } from 'next/cache'
 
-export const revalidate = 60 // кэш на 60 секунд
+export const revalidate = 300
 
-export default async function Home() {
+const getPageData = unstable_cache(async () => {
   const [categoriesRaw, productsRaw, banners] = await Promise.all([
     prisma.category.findMany({ orderBy: { id: 'asc' } }),
     prisma.product.findMany({ include: { category: true, variants: true } }),
     prisma.banner.findMany({ orderBy: { order: 'asc' } }).then(b => b.map(x => ({ ...x, subtitle: x.subtitle ?? undefined }))),
   ])
-
   const categories = categoriesRaw
-    .map(cat => ({
-      ...cat,
-      products: productsRaw.filter(p => p.categoryId === cat.id),
-    }))
+    .map(cat => ({ ...cat, products: productsRaw.filter(p => p.categoryId === cat.id) }))
     .filter(cat => cat.products.length > 0)
+  return { categories, banners }
+}, ['page-data'], { revalidate: 300 })
+
+export default async function Home() {
+  const { categories, banners } = await getPageData()
 
   return (
     <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', paddingTop: '104px' }} className="page-root">
