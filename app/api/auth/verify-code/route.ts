@@ -6,9 +6,7 @@ export async function POST(request: Request) {
   try {
     const { phone, name, code } = await request.json()
     
-    // Валидация и санитизация входных данных
     const sanitizedPhone = sanitizeInput(phone)
-    const sanitizedName = sanitizeInput(name)
     const sanitizedCode = sanitizeInput(code)
     
     const digits = sanitizedPhone.replace(/\D/g, '')
