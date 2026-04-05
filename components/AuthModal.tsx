@@ -131,7 +131,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         {step === 'code' && (
           <form onSubmit={handleVerifyCode}>
             <p style={{ fontSize: '14px', color: '#6b6b6b', marginBottom: '16px' }}>
-              Код отправлен на {phone}
+              Код отправлен на {phone}.<br/>Сообщение придёт в течение 5 минут.
             </p>
             <input
               type="text"
