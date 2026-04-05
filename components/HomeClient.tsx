@@ -229,8 +229,8 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
         </svg>
       </div>
 
-      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px', display: 'flex', gap: '24px' }}>
-        <div style={{ flex: 1 }}>
+      <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px' }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
 
           <BannerCarousel banners={banners} />
 
