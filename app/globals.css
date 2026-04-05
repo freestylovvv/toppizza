@@ -140,6 +140,23 @@ input {
   .summer-banner-emojis span:nth-child(n+4) { display: none; }
 }
 
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-grid > div:last-child {
+    order: -1;
+  }
+}
+
 /* Side decorations */
 .side-deco {
   position: absolute;

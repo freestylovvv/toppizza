@@ -89,7 +89,7 @@ export default function CheckoutPage() {
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
         <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '32px' }}>Оформление заказа</h1>
         
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '32px' }}>
+        <div className="checkout-grid">
           <div>
             <form onSubmit={handleSubmit}>
               <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
