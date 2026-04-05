@@ -261,7 +261,7 @@ export default function ProductCard({ product, allIngredients = [], sauces = [] 
                 {extraIngredients.length > 0 && (
                 <div style={{ marginBottom: '20px' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>Добавить по вкусу</h3>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', maxHeight: '240px', overflowY: 'auto' }}>
+                  <div className="ingredients-grid">
                     {extraIngredients.map(ing => (
                       <div
                         key={ing.id}
@@ -293,7 +293,7 @@ export default function ProductCard({ product, allIngredients = [], sauces = [] 
                 {(['pizza', 'snack', 'combo'].includes(product.category?.type)) && sauces.length > 0 && (
                   <div style={{ marginBottom: '20px' }}>
                     <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>Соусы</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                    <div className="ingredients-grid">
                       {sauces.map(sauce => (
                         <div
                           key={sauce.id}

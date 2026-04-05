@@ -254,7 +254,7 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
           {combos.length > 0 && (
             <section id="combos" style={{ marginBottom: '40px' }}>
               <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '20px', color: '#000' }}>Комбо</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+              <div className="products-grid">
                 {combos.map((combo) => (
                   <ComboCard key={combo.id} combo={combo} products={allProducts} allIngredients={allIngredients} />
                 ))}
@@ -265,7 +265,7 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
           {categories.map((category) => (
             <section key={category.id} id={category.name} style={{ marginBottom: '40px' }}>
               <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '20px', color: '#000' }}>{category.name}</h2>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+              <div className="products-grid">
                 {category.products.map((product) => (
                   <ProductCard key={product.id} product={product} allIngredients={allIngredients} sauces={['pizza','snack','combo'].includes(product.category?.type) ? sauces : []} />
                 ))}
