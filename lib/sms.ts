@@ -21,8 +21,8 @@ export async function sendSms(phone: string, message: string) {
   const params = new URLSearchParams({
     number: formattedPhone,
     text: message,
-    sign: 'TopPizza', // Короткая подпись
-    channel: 'DIRECT' // Прямой канал (быстрее)
+    sign: 'SMS Aero',
+    channel: 'DIRECT'
   })
   
   const requestUrl = `${url}?${params}`
