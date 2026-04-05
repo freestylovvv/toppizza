@@ -18,9 +18,9 @@ export default function Footer() {
           <div>
             <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '16px', color: '#fff' }}>Помощь</h4>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              <li style={{ marginBottom: '8px' }}><a href="#" style={{ fontSize: '14px', color: '#999', textDecoration: 'none' }}>Доставка и оплата</a></li>
-              <li style={{ marginBottom: '8px' }}><a href="#" style={{ fontSize: '14px', color: '#999', textDecoration: 'none' }}>Возврат</a></li>
-              <li style={{ marginBottom: '8px' }}><a href="#" style={{ fontSize: '14px', color: '#999', textDecoration: 'none' }}>FAQ</a></li>
+              <li style={{ marginBottom: '8px' }}><a href="/dostavka" style={{ fontSize: '14px', color: '#999', textDecoration: 'none' }}>Доставка и оплата</a></li>
+              <li style={{ marginBottom: '8px' }}><a href="/oferta" style={{ fontSize: '14px', color: '#999', textDecoration: 'none' }}>Оферта</a></li>
+              <li style={{ marginBottom: '8px' }}><a href="/rekvizity" style={{ fontSize: '14px', color: '#999', textDecoration: 'none' }}>Реквизиты</a></li>
             </ul>
           </div>
           <div>
