@@ -26,28 +26,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Invalid or expired code' }, { status: 400 })
     }
 
-    // Ищем пользователя по номеру (с плюсом и без)
+    // Ищем пользователя
     let user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { phone: normalized },
-          { phone: '+' + normalized }
-        ]
-      }
+      where: { OR: [{ phone: normalized }, { phone: '+' + normalized }] }
     })
-    
-    console.log('Looking for user with phone:', normalized)
-    console.log('Found user:', user ? `id: ${user.id}, isAdmin: ${user.isAdmin}` : 'not found')
+
     if (!user) {
-      // Шифруем чувствительные данные
-      const encryptedEmail = sanitizedName.includes('@') ? encrypt(sanitizedName) : null
-      
-      user = await prisma.user.create({ 
-        data: { 
-          name: sanitizedName || normalized, 
-          phone: normalized,
-          encryptedEmail
-        } 
+      // Если имя не передано — просим его
+      if (!name) {
+        return NextResponse.json({ success: true, needName: true })
+      }
+      user = await prisma.user.create({
+        data: { name: sanitizeInput(name), phone: normalized }
       })
     }
 

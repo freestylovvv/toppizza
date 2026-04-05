@@ -5,14 +5,10 @@ import { sanitizeInput, validatePhone } from '@/lib/security'
 
 export async function POST(request: Request) {
   try {
-    const { phone, name } = await request.json()
-    console.log('Received request:', { phone, name })
+    const { phone } = await request.json()
+    console.log('Received request:', { phone })
 
-    // Валидация и санитизация входных данных
     const sanitizedPhone = sanitizeInput(phone)
-    const sanitizedName = sanitizeInput(name)
-    
-    console.log('Sanitized data:', { sanitizedPhone, sanitizedName })
     
     // Нормализация номера телефона
     const digits = sanitizedPhone.replace(/\D/g, '')
