@@ -36,8 +36,8 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
   const prev = () => setCurrent((prev) => (prev - 1 + banners.length) % banners.length)
 
   return (
-    <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px', height: isMobile ? '250px' : '440px', backgroundColor: '#000' }}>
-      <div style={{ display: 'flex', transition: 'transform 0.5s ease', transform: `translateX(-${current * 100}%)`, height: '100%' }}>
+    <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px', height: isMobile ? '250px' : '440px', backgroundColor: '#000', width: '100%' }}>
+      <div style={{ display: 'flex', transition: 'transform 0.5s ease', transform: `translateX(-${current * 100}%)`, height: '100%', width: '100%' }}>
         {banners.map((banner) => (
           <div
             key={banner.id}

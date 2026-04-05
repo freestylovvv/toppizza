@@ -247,12 +247,16 @@ input {
 /* Mobile */
 @media (max-width: 640px) {
   .page-root {
-    padding-top: 56px;
+    padding-top: 100px;
   }
 
   .header-categories {
-    display: none;
+    display: flex;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
+  .header-categories::-webkit-scrollbar { display: none; }
 
   .category-title {
     font-size: 22px;
