@@ -402,7 +402,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
   if (!user) return null
 
   return (
-    <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', padding: '32px' }}>
+    <div className="admin-root" style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', padding: '32px' }}>
       {navigating && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(255,255,255,0.9)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
           <div style={{ width: '48px', height: '48px', border: '4px solid #f0f0f0', borderTop: '4px solid #ff6900', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -411,12 +411,12 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         </div>
       )}
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+        <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
           <h1 style={{ fontSize: '36px', fontWeight: '700', color: '#000' }}>Админ панель</h1>
           <button onClick={() => { setNavigating(true); router.push('/') }} style={{ padding: '12px 24px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>На сайт</button>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+        <div className="admin-tabs" style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
           {['users', 'codes', 'products', 'categories', 'orders', 'ingredients', 'banners', 'combos'].map(t => (
             <button key={t} onClick={() => setTab(t)} style={{ padding: '12px 24px', backgroundColor: tab === t ? '#ff6900' : '#fff', color: tab === t ? '#fff' : '#000', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>
               {t === 'users' ? 'Пользователи' : t === 'codes' ? 'Коды' : t === 'products' ? 'Товары' : t === 'categories' ? 'Категории' : t === 'orders' ? 'Заказы' : t === 'ingredients' ? 'Ингредиенты' : t === 'banners' ? 'Баннеры' : 'Комбо'}
@@ -425,9 +425,9 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         </div>
 
         {tab === 'users' && (
-          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
+          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
             <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#000' }}>Пользователи</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="admin-table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #f0f0f0' }}>
                   <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b6b6b' }}>ID</th>
@@ -454,14 +454,14 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
 
         {tab === 'codes' && (
-          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
+          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
             <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#000' }}>Коды подтверждения</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="admin-table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #f0f0f0' }}>
                   <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b6b6b' }}>Телефон</th>
@@ -480,13 +480,13 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
 
         {tab === 'products' && (
-          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
+            <div className="admin-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#000' }}>Товары</h2>
               <button onClick={() => { setShowProductForm(true); setEditingProduct(null); setImagePreview(null); setImageFile(null); setComboItems([]); setSelectedCategoryType(''); }} style={{ padding: '12px 24px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>Добавить товар</button>
             </div>
@@ -507,8 +507,8 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         )}
 
         {tab === 'categories' && (
-          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
+            <div className="admin-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#000' }}>Категории</h2>
               <button onClick={() => { setShowCategoryForm(true); setEditingCategory(null); }} style={{ padding: '12px 24px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>Добавить категорию</button>
             </div>
@@ -528,9 +528,9 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         )}
 
         {tab === 'orders' && (
-          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
+          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
             <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#000' }}>Заказы</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="admin-table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #f0f0f0' }}>
                   <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b6b6b' }}>ID</th>
@@ -577,13 +577,13 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
 
         {tab === 'ingredients' && (
-          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
+            <div className="admin-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#000' }}>Ингредиенты</h2>
               <button onClick={() => { setShowIngredientForm(true); setEditingIngredient(null); setImagePreview(null); setImageFile(null); }} style={{ padding: '12px 24px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>Добавить ингредиент</button>
             </div>
@@ -604,8 +604,8 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         )}
 
         {tab === 'combos' && (
-          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
+            <div className="admin-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#000' }}>Комбо-наборы</h2>
               <button onClick={() => { setShowComboForm(true); setEditingCombo(null); setComboItems([]); setImagePreview(null); setImageFile(null); }} style={{ padding: '12px 24px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>Добавить комбо</button>
             </div>
@@ -654,8 +654,8 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         )}
 
         {tab === 'banners' && (
-          <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
+            <div className="admin-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '700', color: '#000' }}>Баннеры ({banners.length}/10)</h2>
               <button onClick={() => { if (banners.length < 10) { setShowBannerForm(true); setImagePreview(null); setImageFile(null); } else { setAlertMessage('Максимум 10 баннеров'); } }} style={{ padding: '12px 24px', backgroundColor: banners.length < 10 ? '#ff6900' : '#ccc', color: '#fff', border: 'none', borderRadius: '8px', cursor: banners.length < 10 ? 'pointer' : 'not-allowed', fontSize: '15px', fontWeight: '500' }}>Добавить баннер</button>
             </div>
