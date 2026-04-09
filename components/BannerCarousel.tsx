@@ -36,7 +36,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
   const prev = () => setCurrent((prev) => (prev - 1 + banners.length) % banners.length)
 
   return (
-    <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px', height: isMobile ? '250px' : '440px', backgroundColor: '#000', width: '100%' }}>
+    <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px', height: isMobile ? 'auto' : '440px', backgroundColor: '#000', width: '100%' }}>
       <div style={{ display: 'flex', transition: 'transform 0.5s ease', transform: `translateX(-${current * 100}%)`, height: '100%', width: '100%' }}>
         {banners.map((banner) => (
           <div
@@ -49,7 +49,7 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
               justifyContent: 'center',
             }}
           >
-            <img src={banner.imageUrl} alt={banner.title} style={{ width: '100%', height: '100%', objectFit: 'cover', imageRendering: '-webkit-optimize-contrast' }} />
+            <img src={banner.imageUrl} alt={banner.title} style={{ width: '100%', height: '100%', objectFit: isMobile ? 'contain' : 'cover', imageRendering: '-webkit-optimize-contrast' }} />
             {(banner.title || banner.subtitle) && (
               <>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.3)' }}></div>
