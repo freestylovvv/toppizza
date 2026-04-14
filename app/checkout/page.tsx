@@ -37,7 +37,11 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('cart') || '[]')
-    setCart(savedCart)
+    setCart(savedCart.map((item: any) => ({
+      ...item,
+      price: Number(item.price),
+      quantity: Number(item.quantity),
+    })))
     
     const savedUser = localStorage.getItem('user')
     if (savedUser) {
@@ -322,7 +326,7 @@ export default function CheckoutPage() {
               {cart.map((item, index) => (
                 <div key={`${item.variantId}-${index}`} style={{ display: 'flex', gap: '12px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #f0f0f0' }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.imageUrl} alt={item.name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} />
+                  <img src={item.imageUrl} alt={item.name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', backgroundColor: '#f0f0f0' }} onError={(e) => { e.currentTarget.style.display = 'none' }} />
                   <div style={{ flex: 1 }}>
                     <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{item.name}</h4>
                     <p style={{ fontSize: '13px', color: '#6b6b6b', marginBottom: '4px' }}>{item.size}</p>
