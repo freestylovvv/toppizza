@@ -391,6 +391,53 @@ input {
   z-index: 2;
 }
 
+.liquid-glass-white {
+  position: relative;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.05);
+  border: 1px solid rgba(255,255,255,0.9);
+  box-shadow:
+    0 4px 32px rgba(0,0,0,0.06),
+    inset 0 1.5px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(0,0,0,0.03);
+  overflow: hidden;
+}
+
+.liquid-glass-white::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(255,255,255,0.6) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 85% 85%, rgba(240,240,255,0.3) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.liquid-glass-white::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -30%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255,255,255,0.45) 50%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 1;
+  animation: lg-shimmer 7s ease-in-out infinite;
+}
+
+.liquid-glass-white > * {
+  position: relative;
+  z-index: 2;
+}
+
 /* Cart float button */
 .cart-float {
   position: fixed;
