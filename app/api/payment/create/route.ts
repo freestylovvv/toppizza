@@ -6,10 +6,8 @@ export async function POST(request: Request) {
     const body = await request.json()
     const { amount, orderData } = body
 
-    const shopId = '1332793'
+    const shopId = process.env.YOOKASSA_SHOP_ID || '1332793'
     const secretKey = process.env.YOOKASSA_SECRET_KEY?.trim()
-
-    console.log('[payment] YOOKASSA_SECRET_KEY present:', !!secretKey, '| length:', secretKey?.length)
 
     if (!secretKey) {
       return NextResponse.json({ success: false, error: 'Payment not configured' }, { status: 500 })
