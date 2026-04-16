@@ -85,7 +85,7 @@ export default function Cart() {
 
       {isOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000 }}>
-        <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '480px', maxWidth: '100%', background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(32px) saturate(180%)', WebkitBackdropFilter: 'blur(32px) saturate(180%)', padding: '32px', overflowY: 'auto', boxShadow: '-4px 0 48px rgba(255,105,0,0.10), inset 1px 0 0 rgba(255,255,255,0.6)', borderLeft: '1px solid rgba(255,255,255,0.4)' }}>
+        <div className="liquid-glass" style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '480px', maxWidth: '100%', padding: '32px', overflowY: 'auto', borderRadius: 0, borderRight: 'none', borderTop: 'none', borderBottom: 'none' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#000' }}>Корзина</h2>
               <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#6b6b6b' }}>×</button>
