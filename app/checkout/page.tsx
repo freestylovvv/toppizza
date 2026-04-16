@@ -30,6 +30,7 @@ export default function CheckoutPage() {
   const [comment, setComment] = useState('')
   const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [paymentError, setPaymentError] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('cash')
 
   useEffect(() => {
@@ -54,35 +55,71 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setPaymentError('')
 
     const orderData = { fullName: name, email: user?.email || '', phone, address, comment, items: cart, totalPrice: total }
 
     if (paymentMethod === 'card') {
-      const res = await fetch('/api/payment/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: total, orderData }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        window.location.href = data.confirmationUrl
-      } else {
-        alert('Ошибка создания платежа: ' + (data.error || 'Попробуйте снова'))
+      try {
+        const controller = new AbortController()
+        const timeout = setTimeout(() => controller.abort(), 15000)
+        const res = await fetch('/api/payment/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: total, orderData }),
+          signal: controller.signal,
+        })
+        clearTimeout(timeout)
+        const data = await res.json()
+        if (data.success) {
+          window.location.href = data.confirmationUrl
+        } else {
+          setPaymentError(data.error || 'Не удалось создать платёж. Попробуйте ещё раз.')
+          setLoading(false)
+        }
+      } catch (err: any) {
+        if (err.name === 'AbortError') {
+          setPaymentError('Превышено время ожидания. Проверьте интернет и попробуйте снова.')
+        } else if (!navigator.onLine) {
+          setPaymentError('Нет подключения к интернету. Проверьте соединение и попробуйте снова.')
+        } else {
+          setPaymentError('Произошла ошибка при создании платежа. Попробуйте ещё раз.')
+        }
         setLoading(false)
       }
       return
     }
 
-    await fetch('/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData),
-    })
-
-    localStorage.removeItem('cart')
-    window.dispatchEvent(new Event('cartUpdated'))
-    setLoading(false)
-    setShowSuccess(true)
+    try {
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 15000)
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+        signal: controller.signal,
+      })
+      clearTimeout(timeout)
+      if (!res.ok) {
+        const data = await res.json()
+        setPaymentError(data.error || 'Не удалось оформить заказ. Попробуйте ещё раз.')
+        setLoading(false)
+        return
+      }
+      localStorage.removeItem('cart')
+      window.dispatchEvent(new Event('cartUpdated'))
+      setShowSuccess(true)
+    } catch (err: any) {
+      if (err.name === 'AbortError') {
+        setPaymentError('Превышено время ожидания. Проверьте интернет и попробуйте снова.')
+      } else if (!navigator.onLine) {
+        setPaymentError('Нет подключения к интернету. Проверьте соединение и попробуйте снова.')
+      } else {
+        setPaymentError('Произошла ошибка при оформлении заказа. Попробуйте ещё раз.')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (cart.length === 0) {
@@ -232,6 +269,12 @@ export default function CheckoutPage() {
                   </p>
                 )}
               </div>
+
+              {paymentError && (
+                <div style={{ padding: '12px 16px', backgroundColor: '#fff0f0', border: '1px solid #ffcccc', borderRadius: '10px', marginBottom: '16px', fontSize: '14px', color: '#cc0000' }}>
+                  ⚠️ {paymentError}
+                </div>
+              )}
 
               <button
                 type="submit"
