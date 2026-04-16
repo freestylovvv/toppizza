@@ -37,8 +37,8 @@ export default function CheckoutPage() {
     const savedCart = JSON.parse(localStorage.getItem('cart') || '[]')
     setCart(savedCart.map((item: any) => ({
       ...item,
-      price: Number(item.price),
-      quantity: Number(item.quantity),
+      price: isNaN(Number(item.price)) ? 0 : Number(item.price),
+      quantity: isNaN(Number(item.quantity)) ? 1 : Number(item.quantity),
     })))
     
     const savedUser = localStorage.getItem('user')
@@ -143,7 +143,7 @@ export default function CheckoutPage() {
         <div className="checkout-grid">
           <div>
             <form onSubmit={handleSubmit}>
-              <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
+              <div className="liquid-glass" style={{ borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
                 <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px' }}>Контактные данные</h2>
                 
                 <input
@@ -180,7 +180,7 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
+              <div className="liquid-glass" style={{ borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
                 <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px' }}>Адрес доставки</h2>
                 
                 <input
@@ -203,7 +203,7 @@ export default function CheckoutPage() {
                 <AddressMap address={address} onAddressChange={setAddress} />
               </div>
 
-              <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
+              <div className="liquid-glass" style={{ borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
                 <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px' }}>Комментарий к заказу</h2>
                 
                 <textarea
@@ -225,7 +225,7 @@ export default function CheckoutPage() {
                 />
               </div>
 
-              <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
+              <div className="liquid-glass" style={{ borderRadius: '16px', padding: '24px', marginBottom: '20px' }}>
                 <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px' }}>Способ оплаты</h2>
                 
                 <div style={{ display: 'flex', gap: '12px', marginBottom: '20px' }}>
@@ -297,7 +297,7 @@ export default function CheckoutPage() {
           </div>
 
           <div>
-            <div style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px', position: 'sticky', top: '100px' }}>
+            <div className="liquid-glass" style={{ borderRadius: '16px', padding: '24px', position: 'sticky', top: '100px' }}>
               <h2 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '20px' }}>Ваш заказ</h2>
               
               {cart.map((item, index) => (
