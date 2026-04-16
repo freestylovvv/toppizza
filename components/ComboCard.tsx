@@ -240,7 +240,7 @@ export default function ComboCard({
 
       {mounted && showModal && createPortal(
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowModal(false)}>
-          <div style={{ backgroundColor: '#fff', borderRadius: '20px', maxWidth: '520px', width: '100%', maxHeight: '90vh', overflow: 'auto', position: 'relative', padding: '28px' }} onClick={e => e.stopPropagation()}>
+          <div style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 4px 32px rgba(255,105,0,0.08), inset 0 1.5px 0 rgba(255,255,255,0.8)', borderRadius: '20px', maxWidth: '520px', width: '100%', maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', position: 'relative', padding: '28px' }} onClick={e => e.stopPropagation()}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#6b6b6b' }}>×</button>
 
             <h2 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '8px' }}>{combo.name}</h2>
