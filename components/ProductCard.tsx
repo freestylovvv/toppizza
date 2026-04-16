@@ -171,7 +171,7 @@ export default function ProductCard({ product, allIngredients = [], sauces = [] 
 
       {mounted && showModal && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowModal(false)}>
-          <div style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', border: '1px solid rgba(255,255,255,0.35)', boxShadow: '0 4px 32px rgba(255,105,0,0.08), inset 0 1.5px 0 rgba(255,255,255,0.18)', borderRadius: '24px', maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', border: '1px solid rgba(255,255,255,0.7)', boxShadow: '0 4px 32px rgba(255,105,0,0.08), inset 0 1.5px 0 rgba(255,255,255,0.6)', borderRadius: '24px', maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#6b6b6b', zIndex: 1 }}>×</button>
             
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px', padding: '24px' }}>
