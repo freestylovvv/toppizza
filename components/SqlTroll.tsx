@@ -4,10 +4,27 @@ import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
 export const SQL_PATTERNS = [
-  'select ', 'union ', 'insert ', 'update ', 'delete ', 'drop ',
-  'truncate ', 'alter ', 'exec(', 'execute(', 'xp_', 'sp_',
-  '--', '/*', '*/', '; ', "' or", "' and", '1=1', '1 =1', '1= 1',
-  "' --", "';", 'char(', 'nchar(', 'varchar(', 'cast(', 'convert(',
+  'union select',
+  'union all select',
+  'insert into',
+  'drop table',
+  'drop database',
+  'delete from',
+  'truncate table',
+  'exec(',
+  'execute(',
+  'xp_cmdshell',
+  'sp_executesql',
+  "' or '1'='1",
+  "' or 1=1",
+  "' and 1=1",
+  "'; drop",
+  "'; select",
+  "'; insert",
+  "'; delete",
+  "'; update",
+  'char(0x',
+  'cast(0x',
 ]
 
 export function hasSql(value: string): boolean {
