@@ -38,9 +38,11 @@ export default function Header({ categories = [] }: HeaderProps) {
   return (
     <>
       <header style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(240, 240, 240, 0.8)',
+        background: 'rgba(255, 255, 255, 0.15)',
+        backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.35)',
+        boxShadow: '0 4px 32px rgba(255, 105, 0, 0.08), 0 1.5px 0 rgba(255,255,255,0.18) inset, 0 -1px 0 rgba(255,105,0,0.07) inset',
         position: 'fixed',
         top: 0,
         left: 0,
