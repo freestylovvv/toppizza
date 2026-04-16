@@ -7,7 +7,11 @@ export async function POST(request: Request) {
     const { amount, orderData } = body
 
     const shopId = '1332793'
-    const secretKey = process.env.YOOKASSA_SECRET_KEY!
+    const secretKey = process.env.YOOKASSA_SECRET_KEY?.trim()
+
+    if (!secretKey) {
+      return NextResponse.json({ success: false, error: 'Payment not configured' }, { status: 500 })
+    }
 
     const payment = await fetch('https://api.yookassa.ru/v3/payments', {
       method: 'POST',
