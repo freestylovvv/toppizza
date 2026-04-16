@@ -85,7 +85,7 @@ export default function Cart() {
 
       {isOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000 }}>
-        <div className="liquid-glass-white" style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '480px', maxWidth: '100%', padding: '32px', overflowY: 'auto', borderRadius: 0, borderRight: 'none', borderTop: 'none', borderBottom: 'none' }}>
+        <div style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '480px', maxWidth: '100%', padding: '32px', overflowY: 'auto', overflowX: 'hidden', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', borderLeft: '1px solid rgba(255,255,255,0.35)', boxShadow: '-4px 0 32px rgba(255,105,0,0.08), inset 1px 0 0 rgba(255,255,255,0.18)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <h2 style={{ fontSize: '28px', fontWeight: '700', color: '#000' }}>Корзина</h2>
               <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: '#6b6b6b' }}>×</button>
