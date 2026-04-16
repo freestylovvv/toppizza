@@ -12,13 +12,17 @@ const AddressMap = dynamic(() => import('@/components/AddressMap'), {
 })
 
 type CartItem = {
-  productId: number
-  variantId: number
-  name: string
-  size: string
-  price: number
+  productId?: number
+  variantId?: number
+  name?: string
+  size?: string
+  price?: number
   quantity: number
-  imageUrl: string
+  imageUrl?: string
+  isCombo?: boolean
+  finalPrice?: number
+  comboName?: string
+  comboImageUrl?: string
 }
 
 export default function CheckoutPage() {
@@ -42,6 +46,7 @@ export default function CheckoutPage() {
     setCart(savedCart.map((item: any) => ({
       ...item,
       price: isNaN(Number(item.price)) ? 0 : Number(item.price),
+      finalPrice: isNaN(Number(item.finalPrice)) ? undefined : Number(item.finalPrice),
       quantity: isNaN(Number(item.quantity)) ? 1 : Number(item.quantity),
     })))
     
@@ -54,7 +59,8 @@ export default function CheckoutPage() {
     }
   }, [])
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const getItemPrice = (item: CartItem) => item.isCombo ? (item.finalPrice ?? 0) * item.quantity : (item.price ?? 0) * item.quantity
+  const total = cart.reduce((sum, item) => sum + getItemPrice(item), 0)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -309,11 +315,11 @@ export default function CheckoutPage() {
               {cart.map((item, index) => (
                 <div key={`${item.variantId}-${index}`} style={{ display: 'flex', gap: '12px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #f0f0f0' }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.imageUrl} alt={item.name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', backgroundColor: '#f0f0f0' }} onError={(e) => { e.currentTarget.style.display = 'none' }} />
+                  <img src={item.isCombo ? item.comboImageUrl : item.imageUrl} alt={item.isCombo ? item.comboName : item.name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', backgroundColor: '#f0f0f0' }} onError={(e) => { e.currentTarget.style.display = 'none' }} />
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{item.name}</h4>
-                    <p style={{ fontSize: '13px', color: '#6b6b6b', marginBottom: '4px' }}>{item.size}</p>
-                    <p style={{ fontSize: '14px', fontWeight: '600' }}>{item.quantity} × {item.price} ₽</p>
+                    <h4 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '4px' }}>{item.isCombo ? item.comboName : item.name}</h4>
+                    <p style={{ fontSize: '13px', color: '#6b6b6b', marginBottom: '4px' }}>{item.isCombo ? 'Комбо' : item.size}</p>
+                    <p style={{ fontSize: '14px', fontWeight: '600' }}>{item.quantity} × {item.isCombo ? item.finalPrice : item.price} ₽</p>
                   </div>
                 </div>
               ))}
