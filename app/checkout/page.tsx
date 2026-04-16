@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import AlertModal from '@/components/AlertModal'
+import SqlTroll, { hasSql } from '@/components/SqlTroll'
 
 const AddressMap = dynamic(() => import('@/components/AddressMap'), {
   ssr: false,
@@ -32,6 +33,9 @@ export default function CheckoutPage() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [paymentError, setPaymentError] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('cash')
+  const [trolled, setTrolled] = useState(false)
+
+  const checkTroll = (val: string) => { if (hasSql(val)) { setTrolled(true); return true }; return false }
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('cart') || '[]')
@@ -136,6 +140,8 @@ export default function CheckoutPage() {
   }
 
   return (
+    <>
+    <SqlTroll visible={trolled} />
     <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', paddingTop: '100px', paddingBottom: '40px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
         <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '32px' }}>Оформление заказа</h1>
@@ -150,7 +156,7 @@ export default function CheckoutPage() {
                   type="text"
                   placeholder="Имя"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => { if (!checkTroll(e.target.value)) setName(e.target.value) }}
                   required
                   style={{
                     width: '100%',
@@ -167,7 +173,7 @@ export default function CheckoutPage() {
                   type="tel"
                   placeholder="Телефон"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={(e) => { if (!checkTroll(e.target.value)) setPhone(e.target.value) }}
                   required
                   style={{
                     width: '100%',
@@ -187,7 +193,7 @@ export default function CheckoutPage() {
                   type="text"
                   placeholder="Улица, дом, квартира"
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={(e) => { if (!checkTroll(e.target.value)) setAddress(e.target.value) }}
                   required
                   style={{
                     width: '100%',
@@ -209,7 +215,7 @@ export default function CheckoutPage() {
                 <textarea
                   placeholder="Например: не звонить в дверь"
                   value={comment}
-                  onChange={(e) => setComment(e.target.value)}
+                  onChange={(e) => { if (!checkTroll(e.target.value)) setComment(e.target.value) }}
                   style={{
                     width: '100%',
                     padding: '16px',
@@ -340,5 +346,6 @@ export default function CheckoutPage() {
         />
       )}
     </div>
+    </>
   )
 }
