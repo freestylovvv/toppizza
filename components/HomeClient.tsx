@@ -45,187 +45,160 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
         ...categories,
       ]} />
 
-      {/* Левый декор — пальма */}
-      <div className="side-deco side-deco-left" aria-hidden>
+      {/* Левый декор — большая пицца */}
+      <div className="side-deco side-deco-left pizza-deco" aria-hidden>
         <svg width="160" viewBox="0 0 160 1200" fill="none" preserveAspectRatio="xMidYMin meet" style={{width:'160px',height:'100%'}}>
-          {/* Солнце вверху */}
-          <circle cx="120" cy="80" r="28" fill="#FFD600" opacity="0.22"/>
-          <circle cx="120" cy="80" r="18" fill="#FFD600" opacity="0.42"/>
-          {[0,45,90,135,180,225,270,315].map((deg, i) => (
-            <line key={i}
-              x1={120 + 21 * Math.cos(deg * Math.PI / 180)}
-              y1={80 + 21 * Math.sin(deg * Math.PI / 180)}
-              x2={120 + 32 * Math.cos(deg * Math.PI / 180)}
-              y2={80 + 32 * Math.sin(deg * Math.PI / 180)}
-              stroke="#FFD600" strokeWidth="2.5" strokeLinecap="round" opacity="0.5"
-            />
-          ))}
-          {/* Пальма */}
-          <path d="M80 520 C78 450 74 380 72 310 C70 260 75 220 80 195" stroke="#d4a96a" strokeWidth="10" strokeLinecap="round" fill="none"/>
-          <path d="M80 195 C60 160 20 140 10 105 C30 112 55 140 80 195" fill="#5cb85c" opacity="0.7"/>
-          <path d="M80 195 C100 150 140 135 155 98 C135 108 105 140 80 195" fill="#4cae4c" opacity="0.7"/>
-          <path d="M80 195 C65 155 50 115 55 78 C68 100 75 150 80 195" fill="#5cb85c" opacity="0.6"/>
-          <path d="M80 195 C95 158 115 120 108 82 C96 105 85 155 80 195" fill="#4cae4c" opacity="0.6"/>
-          <path d="M80 195 C75 155 70 112 80 75 C85 100 83 152 80 195" fill="#6abf69" opacity="0.55"/>
-          <circle cx="68" cy="204" r="7" fill="#a0522d" opacity="0.8"/>
-          <circle cx="82" cy="212" r="6" fill="#8b4513" opacity="0.8"/>
-          {/* Цветок 1 */}
-          {[0,72,144,216,288].map((deg, i) => (
-            <ellipse key={i}
-              cx={50 + 8 * Math.cos(deg * Math.PI / 180)}
-              cy={420 + 8 * Math.sin(deg * Math.PI / 180)}
-              rx="6" ry="3.5"
-              transform={`rotate(${deg}, ${50 + 8 * Math.cos(deg * Math.PI / 180)}, ${420 + 8 * Math.sin(deg * Math.PI / 180)})`}
-              fill="#ff9a3c" opacity="0.55"
-            />
-          ))}
-          <circle cx="50" cy="420" r="5" fill="#FFD600" opacity="0.7"/>
-          <path d="M50 428 C48 455 52 480 50 510" stroke="#6abf69" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.45"/>
-          {/* Трава середина */}
-          <path d="M25 530 C28 505 34 485 30 465" stroke="#6abf69" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.5"/>
-          <path d="M45 530 C47 508 55 490 50 472" stroke="#5cb85c" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.45"/>
-          <path d="M12 530 C10 512 14 494 10 478" stroke="#4cae4c" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.4"/>
-          {/* Цветок 2 */}
-          {[0,72,144,216,288].map((deg, i) => (
-            <ellipse key={i}
-              cx={30 + 7 * Math.cos(deg * Math.PI / 180)}
-              cy={650 + 7 * Math.sin(deg * Math.PI / 180)}
-              rx="5" ry="3"
-              transform={`rotate(${deg}, ${30 + 7 * Math.cos(deg * Math.PI / 180)}, ${650 + 7 * Math.sin(deg * Math.PI / 180)})`}
-              fill="#ff6900" opacity="0.5"
-            />
-          ))}
-          <circle cx="30" cy="650" r="4" fill="#FFD600" opacity="0.65"/>
-          <path d="M30 658 C28 685 32 710 30 740" stroke="#6abf69" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.4"/>
-          {/* Пузырьки */}
-          <circle cx="120" cy="600" r="6" fill="#ff9a3c" opacity="0.18"/>
-          <circle cx="140" cy="750" r="9" fill="#FFD600" opacity="0.15"/>
-          <circle cx="110" cy="900" r="7" fill="#ff6900" opacity="0.14"/>
-          {/* Цветок 3 */}
-          {[0,72,144,216,288].map((deg, i) => (
-            <ellipse key={i}
-              cx={70 + 9 * Math.cos(deg * Math.PI / 180)}
-              cy={850 + 9 * Math.sin(deg * Math.PI / 180)}
-              rx="7" ry="4"
-              transform={`rotate(${deg}, ${70 + 9 * Math.cos(deg * Math.PI / 180)}, ${850 + 9 * Math.sin(deg * Math.PI / 180)})`}
-              fill="#ff9a3c" opacity="0.5"
-            />
-          ))}
-          <circle cx="70" cy="850" r="5" fill="#FFD600" opacity="0.7"/>
-          <path d="M70 858 C68 885 72 910 70 940" stroke="#6abf69" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.4"/>
-          {/* Трава низ */}
-          <path d="M20 1000 C24 975 30 955 26 935" stroke="#6abf69" strokeWidth="4" strokeLinecap="round" fill="none" opacity="0.5"/>
-          <path d="M42 1000 C44 978 52 960 47 942" stroke="#5cb85c" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.45"/>
-          <path d="M8 1000 C6 982 10 964 6 948" stroke="#4cae4c" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.4"/>
-          {/* Цветок 4 */}
-          {[0,72,144,216,288].map((deg, i) => (
-            <ellipse key={i}
-              cx={100 + 7 * Math.cos(deg * Math.PI / 180)}
-              cy={1080 + 7 * Math.sin(deg * Math.PI / 180)}
-              rx="5" ry="3"
-              transform={`rotate(${deg}, ${100 + 7 * Math.cos(deg * Math.PI / 180)}, ${1080 + 7 * Math.sin(deg * Math.PI / 180)})`}
-              fill="#ff9a3c" opacity="0.5"
-            />
-          ))}
-          <circle cx="100" cy="1080" r="4" fill="#FFD600" opacity="0.65"/>
-          {/* Звёздочки */}
-          {[[40,780,6],[130,480,5],[60,1150,5]].map(([cx,cy,r],i) => (
-            <g key={i} transform={`translate(${cx},${cy})`}>
-              {[0,72,144,216,288].map((deg,j) => (
-                <line key={j} x1="0" y1="0"
-                  x2={r * Math.cos((deg-90) * Math.PI/180)}
-                  y2={r * Math.sin((deg-90) * Math.PI/180)}
-                  stroke="#FFD600" strokeWidth="1.5" strokeLinecap="round" opacity="0.45"
-                />
-              ))}
-            </g>
-          ))}
+          {/* Большая пицца сверху */}
+          <circle cx="80" cy="180" r="65" fill="#f5deb3" stroke="#d2691e" strokeWidth="8" opacity="0.9"/>
+          <circle cx="80" cy="180" r="52" fill="#deb887" stroke="#cd853f" strokeWidth="6"/>
+          <circle cx="80" cy="180" r="38" fill="#daa520" stroke="#b8860b" strokeWidth="4"/>
+          
+          {/* Пепперони */}
+          <circle cx="50" cy="155" r="9" fill="#c41e3a"/>
+          <circle cx="105" cy="155" r="10" fill="#a6172e"/>
+          <circle cx="42" cy="195" r="8" fill="#d32f2f"/>
+          <circle cx="115" cy="205" r="9" fill="#b71c1c"/>
+          <circle cx="65" cy="220" r="11" fill="#c62828"/>
+          <circle cx="95" cy="165" r="8" fill="#ad1717"/>
+          
+          {/* Оливки */}
+          <ellipse cx="35" cy="170" rx="5" ry="8" fill="#2e7d32"/>
+          <ellipse cx="125" cy="190" rx="6" ry="9" fill="#1b5e20"/>
+          <ellipse cx="55" cy="210" rx="4" ry="7" fill="#388e3c"/>
+          
+          {/* Сырные нити */}
+          <path d="M55 145 Q65 130 75 145" stroke="#f4a261" strokeWidth="3" strokeLinecap="round" opacity="0.8"/>
+          <path d="M85 150 Q95 135 105 150" stroke="#e76f51" strokeWidth="2.5" strokeLinecap="round" opacity="0.7"/>
+          
+          {/* Пар от пиццы */}
+          <circle cx="80" cy="120" r="12" fill="#fff" opacity="0.6" className="steam"/>
+          <circle cx="65" cy="115" r="8" fill="#fff" opacity="0.5" className="steam"/>
+          <circle cx="95" cy="125" r="10" fill="#fff" opacity="0.55" className="steam"/>
+          
+          {/* Открытая коробка пиццы снизу */}
+          <rect x="25" y="320" width="110" height="80" rx="12" fill="#8b4513" opacity="0.85"/>
+          <rect x="28" y="323" width="104" height="50" rx="8" fill="#d2691e" opacity="0.9"/>
+          <rect x="35" y="340" width="90" height="25" rx="6" fill="#a0522d"/>
+          
+          {/* Клапаны коробки */}
+          <path d="M25 320 Q20 340 25 360" fill="#654321" opacity="0.7"/>
+          <path d="M135 320 Q140 340 135 360" fill="#654321" opacity="0.7"/>
+          
+          {/* Ингредиенты на коробке */}
+          <circle cx="45" cy="355" r="4" fill="#2e7d32" opacity="0.9"/>
+          <circle cx="115" cy="350" r="5" fill="#c41e3a" opacity="0.9"/>
+          <ellipse cx="75" cy="345" rx="6" ry="3" fill="#f4a261" opacity="0.8"/>
+          
+          {/* Логотип TopPizza на коробке */}
+          <text x="80" y="368" textAnchor="middle" fontSize="14" fontWeight="bold" fill="#fff" opacity="0.95" className="toppizza-logo">TopPizza</text>
+          
+          {/* Дополнительные маленькие пиццы */}
+          <circle cx="30" cy="450" r="18" fill="#f5deb3" opacity="0.7"/>
+          <circle cx="30" cy="450" r="14" fill="#daa520"/>
+          <circle cx="130" cy="500" r="22" fill="#deb887" opacity="0.75"/>
+          <circle cx="130" cy="500" r="16" fill="#daa520"/>
+          
+          {/* Оливки и пепперони */}
+          <circle cx="25" cy="445" r="3" fill="#2e7d32"/>
+          <circle cx="125" cy="495" r="4" fill="#c41e3a"/>
+          
+          {/* Ещё сырные нити */}
+          <path d="M35 430 Q40 415 45 430" stroke="#f4a261" strokeWidth="2" opacity="0.7"/>
+          
+          {/* Пар от маленьких */}
+          <circle cx="30" cy="430" r="6" fill="#fff" opacity="0.4" className="steam"/>
+          <circle cx="130" cy="480" r="8" fill="#fff" opacity="0.35" className="steam"/>
+          
+          {/* Ингредиенты внизу */}
+          <circle cx="60" cy="650" r="12" fill="#f5deb3" className="ingredient"/>
+          <circle cx="100" cy="680" r="10" fill="#c41e3a" className="ingredient"/>
+          <circle cx="40" cy="720" r="8" fill="#2e7d32" className="ingredient"/>
+          
+          {/* Тени */}
+          <ellipse cx="80" cy="250" rx="60" ry="8" fill="#000" opacity="0.1"/>
+          <ellipse cx="30" cy="470" rx="16" ry="3" fill="#000" opacity="0.08"/>
+          <ellipse cx="130" cy="520" rx="20" ry="4" fill="#000" opacity="0.08"/>
         </svg>
       </div>
 
-      {/* Правый декор — волны и цветы */}
-      <div className="side-deco side-deco-right" aria-hidden>
+      {/* Правый декор — коробка с пиццей и логотипом */}
+      <div className="side-deco side-deco-right box-deco" aria-hidden>
         <svg width="160" viewBox="0 0 160 1200" fill="none" preserveAspectRatio="xMidYMin meet" style={{width:'160px',height:'100%'}}>
-          {/* Волны вверху */}
-          <path d="M0 90 C30 72 50 108 80 90 C110 72 130 108 160 90" stroke="#ff9a3c" strokeWidth="3" fill="none" opacity="0.35" strokeLinecap="round"/>
-          <path d="M0 112 C30 95 50 130 80 112 C110 95 130 130 160 112" stroke="#FFD600" strokeWidth="2" fill="none" opacity="0.3" strokeLinecap="round"/>
-          <path d="M0 132 C30 115 50 150 80 132 C110 115 130 150 160 132" stroke="#ff6900" strokeWidth="2" fill="none" opacity="0.25" strokeLinecap="round"/>
-          {/* Большой цветок 1 */}
-          {[0,72,144,216,288].map((deg, i) => (
-            <ellipse key={i}
-              cx={110 + 13 * Math.cos(deg * Math.PI / 180)}
-              cy={260 + 13 * Math.sin(deg * Math.PI / 180)}
-              rx="11" ry="6.5"
-              transform={`rotate(${deg}, ${110 + 13 * Math.cos(deg * Math.PI / 180)}, ${260 + 13 * Math.sin(deg * Math.PI / 180)})`}
-              fill="#ff9a3c" opacity="0.5"
-            />
-          ))}
-          <circle cx="110" cy="260" r="9" fill="#FFD600" opacity="0.75"/>
-          <path d="M110 270 C108 300 112 335 110 370" stroke="#6abf69" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.5"/>
-          <path d="M110 305 C92 292 80 278 74 265" stroke="#6abf69" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.45"/>
-          <path d="M110 335 C128 320 140 305 146 290" stroke="#5cb85c" strokeWidth="2.5" strokeLinecap="round" fill="none" opacity="0.45"/>
-          {/* Волны середина */}
-          <path d="M0 480 C30 462 50 498 80 480 C110 462 130 498 160 480" stroke="#ff9a3c" strokeWidth="2.5" fill="none" opacity="0.28" strokeLinecap="round"/>
-          <path d="M0 500 C30 483 50 518 80 500 C110 483 130 518 160 500" stroke="#FFD600" strokeWidth="2" fill="none" opacity="0.22" strokeLinecap="round"/>
-          {/* Цветок 2 */}
-          {[0,72,144,216,288].map((deg, i) => (
-            <ellipse key={i}
-              cx={50 + 10 * Math.cos(deg * Math.PI / 180)}
-              cy={600 + 10 * Math.sin(deg * Math.PI / 180)}
-              rx="8" ry="5"
-              transform={`rotate(${deg}, ${50 + 10 * Math.cos(deg * Math.PI / 180)}, ${600 + 10 * Math.sin(deg * Math.PI / 180)})`}
-              fill="#ff6900" opacity="0.45"
-            />
-          ))}
-          <circle cx="50" cy="600" r="6" fill="#FFD600" opacity="0.7"/>
-          <path d="M50 610 C48 640 52 670 50 700" stroke="#6abf69" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.45"/>
-          <path d="M50 645 C35 632 25 618 20 605" stroke="#6abf69" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.4"/>
-          <path d="M50 670 C65 658 75 645 80 632" stroke="#5cb85c" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.4"/>
-          {/* Пузырьки */}
-          <circle cx="30" cy="420" r="6" fill="#ff9a3c" opacity="0.18"/>
-          <circle cx="145" cy="550" r="9" fill="#FFD600" opacity="0.16"/>
-          <circle cx="20" cy="750" r="7" fill="#ff6900" opacity="0.14"/>
-          <circle cx="140" cy="900" r="11" fill="#ff9a3c" opacity="0.14"/>
-          {/* Волны нижние */}
-          <path d="M0 820 C30 803 50 838 80 820 C110 803 130 838 160 820" stroke="#ff9a3c" strokeWidth="2.5" fill="none" opacity="0.25" strokeLinecap="round"/>
-          <path d="M0 840 C30 823 50 858 80 840 C110 823 130 858 160 840" stroke="#FFD600" strokeWidth="2" fill="none" opacity="0.2" strokeLinecap="round"/>
-          {/* Цветок 3 */}
-          {[0,72,144,216,288].map((deg, i) => (
-            <ellipse key={i}
-              cx={110 + 11 * Math.cos(deg * Math.PI / 180)}
-              cy={960 + 11 * Math.sin(deg * Math.PI / 180)}
-              rx="9" ry="5.5"
-              transform={`rotate(${deg}, ${110 + 11 * Math.cos(deg * Math.PI / 180)}, ${960 + 11 * Math.sin(deg * Math.PI / 180)})`}
-              fill="#ff9a3c" opacity="0.48"
-            />
-          ))}
-          <circle cx="110" cy="960" r="7" fill="#FFD600" opacity="0.72"/>
-          <path d="M110 970 C108 1000 112 1030 110 1060" stroke="#6abf69" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.45"/>
-          <path d="M110 1005 C94 992 82 978 76 965" stroke="#6abf69" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.4"/>
-          <path d="M110 1030 C126 1018 138 1005 144 992" stroke="#5cb85c" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.4"/>
-          {/* Цветок 4 маленький */}
-          {[0,72,144,216,288].map((deg, i) => (
-            <ellipse key={i}
-              cx={40 + 8 * Math.cos(deg * Math.PI / 180)}
-              cy={1120 + 8 * Math.sin(deg * Math.PI / 180)}
-              rx="6" ry="3.5"
-              transform={`rotate(${deg}, ${40 + 8 * Math.cos(deg * Math.PI / 180)}, ${1120 + 8 * Math.sin(deg * Math.PI / 180)})`}
-              fill="#ff6900" opacity="0.45"
-            />
-          ))}
-          <circle cx="40" cy="1120" r="5" fill="#FFD600" opacity="0.68"/>
-          {/* Звёздочки */}
-          {[[35,380,6],[145,700,5],[75,1050,5],[130,1170,4]].map(([cx,cy,r],i) => (
-            <g key={i} transform={`translate(${cx},${cy})`}>
-              {[0,72,144,216,288].map((deg,j) => (
-                <line key={j} x1="0" y1="0"
-                  x2={r * Math.cos((deg-90) * Math.PI/180)}
-                  y2={r * Math.sin((deg-90) * Math.PI/180)}
-                  stroke="#FFD600" strokeWidth="1.5" strokeLinecap="round" opacity="0.45"
-                />
-              ))}
-            </g>
-          ))}
+          {/* Закрытая коробка пиццы с наклейкой TopPizza */}
+          <rect x="20" y="150" width="120" height="90" rx="10" fill="#8b4513" stroke="#654321" strokeWidth="4" opacity="0.88"/>
+          <rect x="24" y="158" width="112" height="68" rx="8" fill="#d2691e" opacity="0.92"/>
+          
+          {/* Верхняя наклейка TopPizza */}
+          <rect x="55" y="130" width="50" height="25" rx="6" fill="#ff6900" stroke="#e65100" strokeWidth="2"/>
+          <text x="80" y="147" textAnchor="middle" fontSize="12" fontWeight="bold" fill="#fff">TOPPIZZA</text>
+          <text x="80" y="160" textAnchor="middle" fontSize="10" fill="#fff4e6" opacity="0.9">Горячая!</text>
+          
+          {/* Наклонённые клапаны */}
+          <path d="M20 150 L15 170 Q18 175 25 168" fill="#654321" opacity="0.8"/>
+          <path d="M140 150 L145 170 Q142 175 135 168" fill="#654321" opacity="0.8"/>
+          
+          {/* Пряжка/скотч */}
+          <rect x="45" y="192" width="70" height="6" rx="3" fill="#ffd54f" opacity="0.9"/>
+          
+          {/* Целая пицца внутри (вид сверху) */}
+          <circle cx="80" cy="195" r="35" fill="#f4e4bc" stroke="#d4af37" strokeWidth="3" opacity="0.85"/>
+          <circle cx="80" cy="195" r="28" fill="#e6c15a" stroke="#b8941f" strokeWidth="2"/>
+          <circle cx="80" cy="195" r="20" fill="#f4a261" stroke="#e67a1f" strokeWidth="2"/>
+          
+          {/* Ингредиенты на пицце */}
+          <circle cx="60" cy="180" r="6" fill="#ad1717"/>
+          <circle cx="100" cy="185" r="7" fill="#c62828"/>
+          <circle cx="70" cy="210" r="5" fill="#2e7d32"/>
+          <circle cx="90" cy="215" r="6" fill="#388e3c"/>
+          <ellipse cx="75" cy="190" rx="8" ry="4" fill="#f4a261" opacity="0.9"/>
+          
+          {/* Пар из коробки */}
+          <ellipse cx="80" cy="135" rx="15" ry="20" fill="#fff" opacity="0.65" className="steam"/>
+          <ellipse cx="65" cy="125" rx="10" ry="15" fill="#fff" opacity="0.55" className="steam"/>
+          <ellipse cx="95" cy="140" rx="12" ry="18" fill="#fff" opacity="0.6" className="steam"/>
+          
+          {/* Дымок доставки */}
+          <ellipse cx="140" cy="100" rx="18" ry="25" fill="#f8f9fa" opacity="0.5" className="smoke"/>
+          <ellipse cx="155" cy="85" rx="14" ry="20" fill="#f1f3f4" opacity="0.45" className="smoke"/>
+          
+          {/* Боковая коробка ниже */}
+          <rect x="35" y="400" width="90" height="70" rx="12" fill="#8b4513" opacity="0.8" transform="rotate(-5 80 435)"/>
+          <rect x="38" y="408" width="84" height="48" rx="8" fill="#a0522d" opacity="0.9" transform="rotate(-5 80 435)"/>
+          
+          {/* Логотип на боковой */}
+          <rect x="60" y="380" width="40" height="18" rx="4" fill="#ff6900" stroke="#e65100" strokeWidth="1.5" transform="rotate(-5 80 435)"/>
+          <text x="80" y="393" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#fff" transform="rotate(-5 80 435)">TOP</text>
+          <text x="80" y="404" textAnchor="middle" fontSize="9" fill="#fff4e6" opacity="0.95" transform="rotate(-5 80 435)">Pizza</text>
+          
+          {/* Маленькая пицца */}
+          <circle cx="80" cy="435" r="22" fill="#f5deb3" opacity="0.75" transform="rotate(-5 80 435)"/>
+          <circle cx="80" cy="435" r="18" fill="#daa520" transform="rotate(-5 80 435)"/>
+          
+          {/* Падающие ингредиенты */}
+          <circle cx="50" cy="300" r="5" fill="#c41e3a" className="falling"/>
+          <circle cx="110" cy="320" r="6" fill="#2e7d32" className="falling"/>
+          <ellipse cx="75" cy="280" rx="7" ry="4" fill="#f4a261" className="falling"/>
+          
+          {/* Нижняя коробка */}
+          <rect x="25" y="700" width="110" height="85" rx="12" fill="#8b4513" opacity="0.85"/>
+          <rect x="28" y="708" width="104" height="60" rx="10" fill="#cd853f" opacity="0.9"/>
+          
+          {/* Открытая пицца кусок */}
+          <path d="M45 780 Q80 760 115 780 Q120 795 105 810 Q80 800 55 810 Z" fill="#f5deb3" stroke="#d2691e" strokeWidth="3"/>
+          <path d="M50 785 Q80 775 110 785" fill="#deb887" stroke="#cd853f" strokeWidth="2"/>
+          
+          {/* Кусочки ингредиентов */}
+          <circle cx="60" cy="775" r="4" fill="#ad1717"/>
+          <circle cx="100" cy="780" r="5" fill="#388e3c"/>
+          
+          {/* Логотип снизу */}
+          <rect x="50" y="830" width="60" height="20" rx="6" fill="#ff6900"/>
+          <text x="80" y="845" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#fff">TopPizza</text>
+          
+          {/* Тени */}
+          <ellipse cx="80" cy="250" rx="55" ry="6" fill="#000" opacity="0.12"/>
+          <ellipse cx="80" cy="475" rx="40" ry="5" fill="#000" opacity="0.1"/>
+          <ellipse cx="80" cy="790" rx="45" ry="7" fill="#000" opacity="0.1"/>
         </svg>
       </div>
 

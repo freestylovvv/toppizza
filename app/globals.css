@@ -173,7 +173,51 @@ input {
   height: 100%;
 }
 
-.side-deco-left  { left:  calc(50% - 900px); }
+@keyframes steam-rise {
+  0% { transform: translateY(0) scale(1) opacity: 0.6; }
+  100% { transform: translateY(-20px) scale(1.2) opacity: 0; }
+}
+
+@keyframes steam-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.05); }
+}
+
+@keyframes ingredient-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-12px) scale(1.1); }
+}
+
+@keyframes logo-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px #ff6900); }
+  50% { filter: drop-shadow(0 0 12px #ff6900) drop-shadow(0 0 8px #ffb74d); }
+}
+
+.steam {
+  animation: steam-rise 4s ease-out infinite, steam-float 2s ease-in-out infinite;
+}
+
+.toppizza-logo {
+  animation: logo-glow 3s ease-in-out infinite;
+}
+
+.ingredient, .falling {
+  animation: ingredient-bounce 3s ease-in-out infinite;
+}
+
+.smoke {
+  animation: steam-rise 6s ease-out infinite 0.5s;
+}
+
+.pizza-deco {
+  filter: drop-shadow(0 8px 24px rgba(244, 162, 97, 0.3));
+}
+
+.box-deco {
+  filter: drop-shadow(0 12px 32px rgba(139, 69, 19, 0.4));
+}
+
+.side-deco-left { left: calc(50% - 900px); }
 .side-deco-right { right: calc(50% - 900px); }
 
 @media (max-width: 1500px) {
