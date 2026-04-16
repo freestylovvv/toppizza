@@ -28,10 +28,7 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState('')
   const [name, setName] = useState('')
   const [comment, setComment] = useState('')
-  const [cardNumber, setCardNumber] = useState('')
-  const [cardExpiry, setCardExpiry] = useState('')
-  const [cardCvv, setCardCvv] = useState('')
-  const [cardHolder, setCardHolder] = useState('')
+  const [loading, setLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState('cash')
 
@@ -56,22 +53,35 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+    setLoading(true)
+
+    const orderData = { fullName: name, email: user?.email || '', phone, address, comment, items: cart, totalPrice: total }
+
+    if (paymentMethod === 'card') {
+      const res = await fetch('/api/payment/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: total, orderData }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        window.location.href = data.confirmationUrl
+      } else {
+        alert('Ошибка создания платежа: ' + (data.error || 'Попробуйте снова'))
+        setLoading(false)
+      }
+      return
+    }
+
     await fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fullName: name,
-        email: user?.email || '',
-        phone,
-        address,
-        comment,
-        items: cart,
-        totalPrice: total,
-      }),
+      body: JSON.stringify(orderData),
     })
-    
+
     localStorage.removeItem('cart')
+    window.dispatchEvent(new Event('cartUpdated'))
+    setLoading(false)
     setShowSuccess(true)
   }
 
@@ -212,109 +222,33 @@ export default function CheckoutPage() {
                       fontWeight: paymentMethod === 'card' ? '600' : '400',
                     }}
                   >
-                    Оплата картой
+                    Оплата картой онлайн
                   </button>
                 </div>
 
                 {paymentMethod === 'card' && (
-                  <>
-                    <input
-                      type="text"
-                      placeholder="Номер карты"
-                      value={cardNumber}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 16)
-                        setCardNumber(value.replace(/(\d{4})/g, '$1 ').trim())
-                      }}
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '16px',
-                        marginBottom: '16px',
-                        border: '1px solid #e0e0e0',
-                        borderRadius: '12px',
-                        fontSize: '15px',
-                        outline: 'none',
-                      }}
-                    />
-                    
-                    <input
-                      type="text"
-                      placeholder="IVAN IVANOV"
-                      value={cardHolder}
-                      onChange={(e) => setCardHolder(e.target.value.toUpperCase().replace(/[^A-Z\s]/g, ''))}
-                      required
-                      style={{
-                        width: '100%',
-                        padding: '16px',
-                        marginBottom: '16px',
-                        border: '1px solid #e0e0e0',
-                        borderRadius: '12px',
-                        fontSize: '15px',
-                        outline: 'none',
-                        textTransform: 'uppercase',
-                      }}
-                    />
-                    
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                      <input
-                        type="text"
-                        placeholder="ММ/ГГ"
-                        value={cardExpiry}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '').slice(0, 4)
-                          if (value.length >= 2) {
-                            setCardExpiry(value.slice(0, 2) + '/' + value.slice(2))
-                          } else {
-                            setCardExpiry(value)
-                          }
-                        }}
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '16px',
-                          border: '1px solid #e0e0e0',
-                          borderRadius: '12px',
-                          fontSize: '15px',
-                          outline: 'none',
-                        }}
-                      />
-                      
-                      <input
-                        type="password"
-                        placeholder="CVV"
-                        value={cardCvv}
-                        onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 3))}
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '16px',
-                          border: '1px solid #e0e0e0',
-                          borderRadius: '12px',
-                          fontSize: '15px',
-                          outline: 'none',
-                        }}
-                      />
-                    </div>
-                  </>
+                  <p style={{ fontSize: '14px', color: '#6b6b6b', padding: '12px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+                    После нажатия «Оформить заказ» вы будете перенаправлены на страницу оплаты ЮКасса.
+                  </p>
                 )}
               </div>
 
               <button
                 type="submit"
+                disabled={loading}
                 style={{
                   width: '100%',
                   padding: '18px',
-                  backgroundColor: '#ff6900',
+                  backgroundColor: loading ? '#ccc' : '#ff6900',
                   color: '#fff',
                   border: 'none',
                   borderRadius: '12px',
                   fontSize: '18px',
                   fontWeight: '600',
-                  cursor: 'pointer',
+                  cursor: loading ? 'not-allowed' : 'pointer',
                 }}
               >
-                Оформить заказ на {total} ₽
+                {loading ? 'Обработка...' : `Оформить заказ на ${total} ₽`}
               </button>
             </form>
           </div>
