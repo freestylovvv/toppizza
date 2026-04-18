@@ -1,9 +1,6 @@
 import './globals.css'
 import type { Metadata, Viewport } from 'next'
 
-import './globals.css'
-import type { Metadata, Viewport } from 'next'
-
 export const metadata: Metadata = {
   title: 'TopPizza — Доставка пиццы',
   description: 'Быстрая доставка вкусной пиццы. Большой выбор пицц, закусок и напитков. Закажите прямо сейчас!',
