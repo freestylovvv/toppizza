@@ -68,15 +68,16 @@ export default function ProductCard({ product, allIngredients = [], sauces = [] 
   }, [product.variants, selectedVariant])
   
   const getImageSize = () => {
+    if (isMobile) return '100%'
     if (!selectedVariant) return '280px'
     const s = selectedVariant.size.toLowerCase()
     if (s.includes('маленьк')) return '240px'
-    if (s.includes('средн')) return '340px'
-    if (s.includes('больш')) return '440px'
+    if (s.includes('средн')) return '300px'
+    if (s.includes('больш')) return '360px'
     if (s.includes('25')) return '240px'
-    if (s.includes('30')) return '340px'
-    if (s.includes('35')) return '440px'
-    return '340px'
+    if (s.includes('30')) return '300px'
+    if (s.includes('35')) return '360px'
+    return '300px'
   }
 
   const toggleRemoveIngredient = (ing: string) => {
@@ -170,14 +171,14 @@ export default function ProductCard({ product, allIngredients = [], sauces = [] 
       </div>
 
       {mounted && showModal && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowModal(false)}>
-          <div style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 4px 32px rgba(255,105,0,0.08), inset 0 1.5px 0 rgba(255,255,255,0.8)', borderRadius: '24px', maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '8px' : '20px' }} onClick={() => setShowModal(false)}>
+          <div style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 4px 32px rgba(255,105,0,0.08), inset 0 1.5px 0 rgba(255,255,255,0.8)', borderRadius: '24px', maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', position: 'relative', boxSizing: 'border-box' }} onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#6b6b6b', zIndex: 1 }}>×</button>
             
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px', padding: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px', padding: isMobile ? '16px' : '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={product.imageUrl} alt={product.name} style={{ width: getImageSize(), height: getImageSize(), objectFit: 'contain', transition: 'all 0.3s' }} />
+                <img src={product.imageUrl} alt={product.name} style={{ width: getImageSize(), height: isMobile ? 'auto' : getImageSize(), maxWidth: '100%', objectFit: 'contain', transition: 'all 0.3s' }} />
               </div>
               
               <div>
