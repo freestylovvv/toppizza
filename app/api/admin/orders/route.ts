@@ -14,6 +14,20 @@ export async function GET() {
   }
 }
 
+export async function POST(req: Request) {
+  const body = await req.json()
+  if (body._method === 'PUT') {
+    try {
+      const { orderId, status } = body
+      await prisma.order.update({ where: { id: orderId }, data: { status } })
+      return NextResponse.json({ success: true })
+    } catch (error) {
+      return NextResponse.json({ success: false }, { status: 500 })
+    }
+  }
+  return NextResponse.json({ success: false, error: 'Unknown action' }, { status: 400 })
+}
+
 export async function PUT(req: Request) {
   try {
     const { orderId, status } = await req.json()

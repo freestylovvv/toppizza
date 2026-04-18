@@ -277,9 +277,9 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
 
   const updateOrderStatus = async (orderId: number, status: string) => {
     const res = await fetch('/api/admin/orders', {
-      method: 'PUT',
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId, status }),
+      body: JSON.stringify({ _method: 'PUT', orderId, status }),
     })
     if (res.ok) loadData()
   }
