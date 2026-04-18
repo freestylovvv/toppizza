@@ -21,9 +21,15 @@ export default function SuccessPage() {
         </p>
         <button
           onClick={() => router.push('/')}
-          style={{ padding: '16px 32px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer' }}
+          style={{ padding: '16px 32px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', marginRight: '12px' }}
         >
-          Вернуться на главную
+          На главную
+        </button>
+        <button
+          onClick={() => router.push('/profile')}
+          style={{ padding: '16px 32px', backgroundColor: '#fff', color: '#ff6900', border: '2px solid #ff6900', borderRadius: '12px', fontSize: '16px', fontWeight: '600', cursor: 'pointer' }}
+        >
+          Мои заказы
         </button>
       </div>
     </div>

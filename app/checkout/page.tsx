@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import AlertModal from '@/components/AlertModal'
+import AuthModal from '@/components/AuthModal'
 import SqlTroll, { hasSql } from '@/components/SqlTroll'
 
 const AddressMap = dynamic(() => import('@/components/AddressMap'), {
@@ -38,6 +39,7 @@ export default function CheckoutPage() {
   const [paymentError, setPaymentError] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('cash')
   const [trolled, setTrolled] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
 
   const checkTroll = (val: string) => { if (hasSql(val)) { setTrolled(true); return true }; return false }
 
@@ -55,7 +57,8 @@ export default function CheckoutPage() {
       const userData = JSON.parse(savedUser)
       setUser(userData)
       setName(userData.name || '')
-      setPhone(userData.phone || '')
+      const rawPhone = userData.phone || ''
+      setPhone(rawPhone && !rawPhone.startsWith('+') ? '+' + rawPhone : rawPhone)
     }
   }, [])
 
@@ -64,6 +67,10 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!user) {
+      setShowAuthModal(true)
+      return
+    }
     setLoading(true)
     setPaymentError('')
 
@@ -118,7 +125,7 @@ export default function CheckoutPage() {
       }
       localStorage.removeItem('cart')
       window.dispatchEvent(new Event('cartUpdated'))
-      setShowSuccess(true)
+      router.push('/checkout/success')
     } catch (err: any) {
       if (err.name === 'AbortError') {
         setPaymentError('Превышено время ожидания. Проверьте интернет и попробуйте снова.')
@@ -148,6 +155,17 @@ export default function CheckoutPage() {
   return (
     <>
     <SqlTroll visible={trolled} />
+    <AuthModal
+      isOpen={showAuthModal}
+      onClose={() => setShowAuthModal(false)}
+      onSuccess={(userData) => {
+        setUser(userData)
+        setName(userData.name || '')
+        const rawPhone = userData.phone || ''
+        setPhone(rawPhone && !rawPhone.startsWith('+') ? '+' + rawPhone : rawPhone)
+        setShowAuthModal(false)
+      }}
+    />
     <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', paddingTop: '100px', paddingBottom: '40px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
         <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '32px' }}>Оформление заказа</h1>
@@ -342,15 +360,7 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-      {showSuccess && (
-        <AlertModal
-          message="Заказ оформлен! Мы свяжемся с вами в ближайшее время."
-          onClose={() => {
-            setShowSuccess(false)
-            router.push('/')
-          }}
-        />
-      )}
+
     </div>
     </>
   )
