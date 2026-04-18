@@ -12,6 +12,9 @@ export const metadata: Metadata = {
     locale: 'ru_RU',
     siteName: 'TopPizza',
   },
+  verification: {
+    google: 'Z46KwlnrcRmFqHyz4GHDTyh3dxHS_XdMmqq0DKbysMI',
+  },
 }
 
 export const viewport: Viewport = {
