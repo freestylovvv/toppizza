@@ -12,12 +12,12 @@ export async function POST(request: Request) {
     
     // Нормализация номера телефона
     const digits = sanitizedPhone.replace(/\D/g, '')
-    const normalized = digits.startsWith('7') ? digits : '7' + digits
+    const normalized = '+' + (digits.startsWith('7') ? digits : '7' + digits)
     
     console.log('Normalized phone:', normalized)
     
-    if (!validatePhone('+' + normalized)) {
-      console.log('Phone validation failed for:', '+' + normalized)
+    if (!validatePhone(normalized)) {
+      console.log('Phone validation failed for:', normalized)
       return NextResponse.json({ success: false, error: 'Invalid phone format' }, { status: 400 })
     }
 

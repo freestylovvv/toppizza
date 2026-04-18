@@ -10,9 +10,9 @@ export async function POST(request: Request) {
     const sanitizedCode = sanitizeInput(code)
     
     const digits = sanitizedPhone.replace(/\D/g, '')
-    const normalized = digits.startsWith('7') ? digits : '7' + digits
+    const normalized = '+' + (digits.startsWith('7') ? digits : '7' + digits)
     
-    if (!validatePhone('+' + normalized)) {
+    if (!validatePhone(normalized)) {
       return NextResponse.json({ success: false, error: 'Invalid phone format' }, { status: 400 })
     }
 
@@ -24,18 +24,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Invalid or expired code' }, { status: 400 })
     }
 
-    // Ищем пользователя
     let user = await prisma.user.findFirst({
-      where: { OR: [{ phone: normalized }, { phone: '+' + normalized }] }
+      where: { OR: [{ phone: normalized }, { phone: normalized.slice(1) }] }
     })
 
     if (!user) {
-      // Если имя не передано — просим его
       if (!name) {
         return NextResponse.json({ success: true, needName: true })
       }
       user = await prisma.user.create({
         data: { name: sanitizeInput(name), phone: normalized }
+      })
+    } else if (user.phone !== normalized) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { phone: normalized }
       })
     }
 
