@@ -125,7 +125,7 @@ export default function CheckoutPage() {
       }
       localStorage.removeItem('cart')
       window.dispatchEvent(new Event('cartUpdated'))
-      router.push('/checkout/success')
+      router.push('/checkout/success?method=cash')
     } catch (err: any) {
       if (err.name === 'AbortError') {
         setPaymentError('Превышено время ожидания. Проверьте интернет и попробуйте снова.')
