@@ -28,18 +28,24 @@ const getKeys = () => {
 
 const { privateKey, publicKey } = getKeys();
 
-// Шифрование данных
+// Шифрование данных (AES для поддержки длинных строк)
 export const encrypt = (text: string): string => {
-  const buffer = Buffer.from(text, 'utf8');
-  const encrypted = crypto.publicEncrypt(publicKey, buffer);
-  return encrypted.toString('base64');
+  const key = crypto.createHash('sha256').update(process.env.ADMIN_SECRET_KEY || 'default').digest()
+  const iv = crypto.randomBytes(16)
+  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
+  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()])
+  return iv.toString('hex') + ':' + encrypted.toString('base64')
 };
 
 // Расшифровка данных
 export const decrypt = (encryptedText: string): string => {
-  const buffer = Buffer.from(encryptedText, 'base64');
-  const decrypted = crypto.privateDecrypt(privateKey, buffer);
-  return decrypted.toString('utf8');
+  const [ivHex, data] = encryptedText.split(':')
+  if (!ivHex || !data) return encryptedText
+  const key = crypto.createHash('sha256').update(process.env.ADMIN_SECRET_KEY || 'default').digest()
+  const iv = Buffer.from(ivHex, 'hex')
+  const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv)
+  const decrypted = Buffer.concat([decipher.update(Buffer.from(data, 'base64')), decipher.final()])
+  return decrypted.toString('utf8')
 };
 
 // Хеширование паролей
