@@ -66,6 +66,9 @@ export default function ProfilePage() {
     }
 
     fetchUserData(userData.id)
+
+    const interval = setInterval(() => fetchUserData(userData.id), 30000)
+    return () => clearInterval(interval)
   }, [router])
 
   const fetchUserData = async (userId: number) => {
@@ -193,6 +196,12 @@ export default function ProfilePage() {
                     <p style={{ fontSize: '14px', color: '#6b6b6b', marginTop: '4px' }}>
                       {new Date(order.createdAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </p>
+                    {order.address && (
+                      <p style={{ fontSize: '13px', color: '#6b6b6b', marginTop: '4px' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ marginRight: 4, verticalAlign: 'middle' }}><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#6b6b6b"/></svg>
+                        {order.address}
+                      </p>
+                    )}
                     <span style={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -224,6 +233,26 @@ export default function ProfilePage() {
                     </div>
                   ))}
                 </div>
+                <button
+                  onClick={() => {
+                    const cartItems = order.items.map((item: any) => ({
+                      productId: item.productId,
+                      variantId: item.variantId,
+                      name: item.productName,
+                      size: item.variantSize,
+                      price: item.price,
+                      quantity: item.quantity,
+                      imageUrl: item.imageUrl,
+                    }))
+                    const existing = JSON.parse(localStorage.getItem('cart') || '[]')
+                    localStorage.setItem('cart', JSON.stringify([...existing, ...cartItems]))
+                    window.dispatchEvent(new Event('cartUpdated'))
+                    router.push('/')
+                  }}
+                  style={{ marginTop: '16px', padding: '10px 20px', backgroundColor: '#fff', color: '#ff6900', border: '2px solid #ff6900', borderRadius: '10px', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+                >
+                  Повторить заказ
+                </button>
               </div>
             ))}
           </div>
