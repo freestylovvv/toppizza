@@ -314,12 +314,42 @@ export default function ProfilePage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {orders.map((order) => (
               <div key={order.id} style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #f0f0f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid #f0f0f0' }}>
                   <div>
                     <span style={{ fontSize: '20px', fontWeight: '700', color: '#000' }}>Заказ #{order.id}</span>
                     <p style={{ fontSize: '14px', color: '#6b6b6b', marginTop: '4px' }}>
                       {new Date(order.createdAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </p>
+                    <span style={{
+                      display: 'inline-block',
+                      marginTop: '8px',
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      backgroundColor:
+                        order.status === 'pending' ? '#fff3e0' :
+                        order.status === 'confirmed' ? '#e3f2fd' :
+                        order.status === 'cooking' ? '#fff8e1' :
+                        order.status === 'delivering' ? '#e8f5e9' :
+                        order.status === 'delivered' ? '#e8f5e9' :
+                        order.status === 'cancelled' ? '#fce4ec' : '#f5f5f5',
+                      color:
+                        order.status === 'pending' ? '#e65100' :
+                        order.status === 'confirmed' ? '#1565c0' :
+                        order.status === 'cooking' ? '#f57f17' :
+                        order.status === 'delivering' ? '#2e7d32' :
+                        order.status === 'delivered' ? '#1b5e20' :
+                        order.status === 'cancelled' ? '#c62828' : '#616161',
+                    }}>
+                      {order.status === 'pending' && '⏳ Ожидает подтверждения'}
+                      {order.status === 'confirmed' && '✅ Подтверждён'}
+                      {order.status === 'cooking' && '👨‍🍳 Готовится'}
+                      {order.status === 'delivering' && '🚗 В пути'}
+                      {order.status === 'delivered' && '✔️ Доставлен'}
+                      {order.status === 'cancelled' && '❌ Отменён'}
+                      {!['pending','confirmed','cooking','delivering','delivered','cancelled'].includes(order.status) && order.status}
+                    </span>
                   </div>
                   <span style={{ fontSize: '24px', fontWeight: '700', color: '#ff6900' }}>{order.totalPrice} ₽</span>
                 </div>
