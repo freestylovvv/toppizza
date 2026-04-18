@@ -562,16 +562,17 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
                           border: '1px solid #e0e0e0',
                           borderRadius: '6px',
                           fontSize: '13px',
-                          backgroundColor: o.status === 'pending' ? '#fff3cd' : o.status === 'processing' ? '#cfe2ff' : o.status === 'completed' ? '#d1e7dd' : o.status === 'delivered' ? '#d4edda' : '#f8d7da',
+                          backgroundColor: o.status === 'pending' ? '#fff3cd' : o.status === 'confirmed' ? '#cfe2ff' : o.status === 'cooking' ? '#fff8e1' : o.status === 'delivering' ? '#d1e7dd' : o.status === 'delivered' ? '#d4edda' : '#f8d7da',
                           cursor: 'pointer',
                           outline: 'none',
                         }}
                       >
-                        <option value="pending">Ожидает</option>
-                        <option value="processing">Готовится</option>
-                        <option value="completed">Выполнен</option>
-                        <option value="delivered">Доставлен</option>
-                        <option value="cancelled">Отменен</option>
+                        <option value="pending">⏳ Ожидает подтверждения</option>
+                        <option value="confirmed">✅ Подтверждён</option>
+                        <option value="cooking">👨‍🍳 Готовится</option>
+                        <option value="delivering">🚗 В пути</option>
+                        <option value="delivered">✔️ Доставлен</option>
+                        <option value="cancelled">❌ Отменён</option>
                       </select>
                     </td>
                   </tr>
