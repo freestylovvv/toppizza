@@ -567,12 +567,12 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
                           outline: 'none',
                         }}
                       >
-                        <option value="pending">⏳ Ожидает подтверждения</option>
-                        <option value="confirmed">✅ Подтверждён</option>
-                        <option value="cooking">👨‍🍳 Готовится</option>
-                        <option value="delivering">🚗 В пути</option>
-                        <option value="delivered">✔️ Доставлен</option>
-                        <option value="cancelled">❌ Отменён</option>
+                        <option value="pending">Ожидает подтверждения</option>
+                        <option value="confirmed">Подтверждён</option>
+                        <option value="cooking">Готовится</option>
+                        <option value="delivering">В пути</option>
+                        <option value="delivered">Доставлен</option>
+                        <option value="cancelled">Отменён</option>
                       </select>
                     </td>
                   </tr>
