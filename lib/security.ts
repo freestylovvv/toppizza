@@ -65,7 +65,7 @@ export const verifyPassword = (password: string, hashedPassword: string): boolea
 // Валидация входных данных для защиты от SQL-инъекций
 export const sanitizeInput = (input: string): string => {
   return input
-    .replace(/['"\\;]/g, '') // Удаляем опасные символы
+    .replace(/["\\;]/g, '') // Удаляем опасные символы (оставляем + и ')
     .trim()
     .substring(0, 255); // Ограничиваем длину
 };
