@@ -18,7 +18,7 @@ export default function DostavkaPage() {
       </ul>
 
       <h2 style={{ fontSize: '20px', fontWeight: '600', margin: '24px 0 12px' }}>Контакты</h2>
-      <p>Email: svyatoslovvv@gmail.com<br />Телефон: +7 (922) 046-94-22</p>
+      <p>Email: usergeevic289@gmail.com</p>
     </div>
   )
 }

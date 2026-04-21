@@ -34,7 +34,7 @@ export default function Footer() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#999"/>
               </svg>
-              <p style={{ fontSize: '14px', color: '#999', margin: 0 }}>svyatoslovvv@gmail.com</p>
+              <p style={{ fontSize: '14px', color: '#999', margin: 0 }}>usergeevic289@gmail.com</p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
