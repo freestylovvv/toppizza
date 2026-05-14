@@ -64,7 +64,7 @@ export async function POST(request: Request) {
           type: 'redirect',         // тип подтверждения — редирект на страницу оплаты
           // URL куда вернётся пользователь после успешной оплаты
           // NEXT_PUBLIC_ — переменная доступна и на сервере и в браузере
-          return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success`,
+          return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/oformlenie/uspeh`,
         },
         capture: true,
         // capture: true — автоматически подтверждать платёж после авторизации

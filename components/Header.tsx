@@ -102,7 +102,7 @@ export default function Header({ categories = [] }: HeaderProps) {
                     </button>
                   )}
                   <button
-                    onClick={() => router.push('/profile')}
+                    onClick={() => router.push('/profil')}
                     style={{
                       padding: '10px 16px',
                       backgroundColor: '#fff',

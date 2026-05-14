@@ -164,7 +164,7 @@ export default function Cart() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => { setIsOpen(false); window.location.href = '/checkout' }}
+                  onClick={() => { setIsOpen(false); window.location.href = '/oformlenie' }}
                   style={{ width: '100%', padding: '18px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '16px', fontWeight: '600', transition: 'background-color 0.2s' }}
                   onMouseEnter={e => e.currentTarget.style.backgroundColor = '#e85d00'}
                   onMouseLeave={e => e.currentTarget.style.backgroundColor = '#ff6900'}
