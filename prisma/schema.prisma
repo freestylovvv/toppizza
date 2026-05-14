@@ -1,132 +1,388 @@
+// ============================================================
+// PRISMA SCHEMA — главный файл конфигурации базы данных
+// Здесь описывается структура всех таблиц и связей между ними
+// Prisma читает этот файл и генерирует TypeScript-клиент для работы с БД
+// ============================================================
+
+// generator — указывает Prisma что нужно сгенерировать
+// provider = "prisma-client-js" означает: сгенерировать JavaScript/TypeScript клиент
+// После команды "npx prisma generate" появится папка node_modules/@prisma/client
+// с готовыми типами и методами для работы с БД
 generator client {
   provider = "prisma-client-js"
 }
 
+// datasource — настройки подключения к базе данных
+// provider = "postgresql" — используем PostgreSQL (не MySQL, не SQLite)
+// url — основной URL подключения, берётся из переменной окружения DATABASE_URL
+//   формат: postgresql://user:password@host:port/dbname?schema=public
+// directUrl — прямое подключение (нужно для Neon/Railway где есть connection pooler)
+//   при миграциях Prisma использует directUrl чтобы обойти пулер соединений
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
+// ============================================================
+// МОДЕЛЬ Category — таблица категорий товаров
+// Примеры категорий: Пиццы, Закуски, Напитки, Десерты
+// ============================================================
 model Category {
+  // id — первичный ключ, целое число, автоматически увеличивается (1, 2, 3...)
+  // @id говорит Prisma что это первичный ключ таблицы
+  // @default(autoincrement()) — БД сама присваивает следующий номер при создании записи
   id       Int       @id @default(autoincrement())
+
+  // name — название категории, обязательное поле, тип TEXT в PostgreSQL
   name     String
+
+  // type — тип категории, используется для логики отображения на фронтенде
+  // Например: "pizza" показывает выбор размера, "drink" — нет
+  // @default("pizza") — если не передать тип, будет "pizza"
   type     String    @default("pizza")
+
+  // products — виртуальное поле (не колонка в БД!)
+  // Это связь один-ко-многим: одна категория → много товаров
+  // Prisma автоматически подгружает товары когда делаем include: { products: true }
   products Product[]
 }
 
+// ============================================================
+// МОДЕЛЬ Product — таблица товаров (пиццы, закуски, напитки и т.д.)
+// ============================================================
 model Product {
+  // id — уникальный идентификатор товара
   id                   Int         @id @default(autoincrement())
+
+  // name — название товара (например "Пепперони", "Картофель фри")
   name                 String
+
+  // imageUrl — URL картинки товара
+  // Может быть: /uploads/filename.webp (загруженное фото) или data:image/svg+xml (заглушка)
   imageUrl             String
+
+  // ingredients — полный список ингредиентов через запятую для отображения
+  // Пример: "Моцарелла, томатный соус, пепперони, орегано"
+  // @default("") — пустая строка если не заполнено
   ingredients          String      @default("")
+
+  // requiredIngredients — ингредиенты которые НЕЛЬЗЯ убрать (базовые)
+  // Пример: "Тесто, томатный соус, моцарелла"
+  // Отображаются серыми тегами в модалке товара
   requiredIngredients  String      @default("")
+
+  // removableIngredients — ингредиенты которые МОЖНО убрать по желанию
+  // Пример: "Лук, перец, маслины"
+  // Отображаются кликабельными тегами — клик зачёркивает ингредиент
   removableIngredients String      @default("")
+
+  // categoryId — внешний ключ, ID категории к которой принадлежит товар
+  // Это реальная колонка в таблице products в БД
   categoryId           Int
+
+  // category — виртуальная связь с таблицей Category
+  // @relation указывает: поле categoryId ссылается на поле id в таблице Category
+  // Позволяет делать product.category.name вместо отдельного запроса
   category             Category    @relation(fields: [categoryId], references: [id])
+
+  // variants — виртуальная связь один-ко-многим с вариантами товара
+  // У пиццы обычно 3 варианта (маленькая/средняя/большая)
+  // У напитка — 1 вариант (0.5л)
   variants             Variant[]
 }
 
+// ============================================================
+// МОДЕЛЬ Variant — варианты товара (размер + цена)
+// Каждый товар имеет минимум 1 вариант
+// ============================================================
 model Variant {
+  // id — уникальный идентификатор варианта
   id        Int     @id @default(autoincrement())
+
+  // productId — внешний ключ, к какому товару относится этот вариант
   productId Int
+
+  // product — обратная связь с таблицей Product
+  // Позволяет делать variant.product.name
   product   Product @relation(fields: [productId], references: [id])
+
+  // size — название размера/варианта
+  // Примеры: "Маленькая 25 см", "Средняя 30 см", "Большая 35 см", "Стандарт", "0.5 л"
   size      String
+
+  // price — цена варианта в рублях (целое число, без копеек)
   price     Int
 }
 
+// ============================================================
+// МОДЕЛЬ User — зарегистрированные пользователи сайта
+// Авторизация происходит по номеру телефона через SMS-код
+// ============================================================
 model User {
-  id              Int      @id @default(autoincrement())
-  name            String
-  phone           String   @unique
-  email           String?
-  encryptedEmail  String?  // Зашифрованный email
-  birthday        DateTime?
-  encryptedBirthday String? // Зашифрованная дата рождения
-  isAdmin         Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  orders          Order[]
+  // id — уникальный идентификатор пользователя
+  id                Int       @id @default(autoincrement())
+
+  // name — имя пользователя, вводится при первой регистрации
+  name              String
+
+  // phone — номер телефона в формате 7XXXXXXXXXX (без +)
+  // @unique — в таблице не может быть двух пользователей с одинаковым телефоном
+  // Используется как логин для входа
+  phone             String    @unique
+
+  // email — электронная почта, необязательное поле (знак ? означает nullable)
+  // Используется для рассылок, не для авторизации
+  email             String?
+
+  // encryptedEmail — email зашифрованный RSA публичным ключом
+  // Хранится для защиты персональных данных (GDPR/152-ФЗ)
+  // Знак ? означает что поле может быть NULL
+  encryptedEmail    String?
+
+  // birthday — дата рождения, необязательная
+  // Тип DateTime в Prisma = TIMESTAMP в PostgreSQL
+  birthday          DateTime?
+
+  // encryptedBirthday — зашифрованная дата рождения (ISO строка зашифрованная RSA)
+  encryptedBirthday String?
+
+  // isAdmin — флаг администратора
+  // @default(false) — все новые пользователи обычные, не админы
+  // Выдаётся через /api/admin/make-admin
+  isAdmin           Boolean   @default(false)
+
+  // createdAt — дата и время регистрации
+  // @default(now()) — автоматически ставится текущее время при создании записи
+  createdAt         DateTime  @default(now())
+
+  // orders — виртуальная связь: у пользователя много заказов
+  orders            Order[]
 }
 
-model TelegramUser {
-  id         Int      @id @default(autoincrement())
-  username   String?
-  phone      String?  @unique
-  chatId     String   @unique
-  createdAt  DateTime @default(now())
-}
 
+
+// ============================================================
+// МОДЕЛЬ VerificationCode — временные коды подтверждения
+// Создаётся при запросе SMS/Telegram кода, удаляется после использования
+// ============================================================
 model VerificationCode {
+  // id — уникальный идентификатор кода
   id        Int      @id @default(autoincrement())
+
+  // phone — телефон для которого выдан код (формат 7XXXXXXXXXX)
   phone     String
+
+  // code — 6-значный числовой код (например "847291")
+  // Генерируется случайно: Math.floor(100000 + Math.random() * 900000)
   code      String
+
+  // expiresAt — время истечения кода
+  // Устанавливается как Date.now() + 10 минут при создании
+  // При проверке сравниваем: expiresAt >= new Date() (код ещё действителен?)
   expiresAt DateTime
+
+  // createdAt — когда был создан код
   createdAt DateTime @default(now())
 }
 
+// ============================================================
+// МОДЕЛЬ Order — заказы покупателей
+// Создаётся либо при оплате наличными (/api/orders)
+// либо после успешной онлайн-оплаты (/api/payment/webhook)
+// ============================================================
 model Order {
+  // id — номер заказа (показывается клиенту: "Заказ #42")
   id                Int         @id @default(autoincrement())
+
+  // fullName — имя получателя в открытом виде (для отображения в админке)
   fullName          String
-  encryptedFullName String?     // Зашифрованное имя
+
+  // encryptedFullName — то же имя но зашифрованное RSA
+  // Знак ? — может быть NULL для старых заказов до введения шифрования
+  encryptedFullName String?
+
+  // email — электронная почта в открытом виде
   email             String
-  encryptedEmail    String?     // Зашифрованный email
+
+  // encryptedEmail — зашифрованный email
+  encryptedEmail    String?
+
+  // phone — телефон в открытом виде (для связи с клиентом)
   phone             String
-  encryptedPhone    String?     // Зашифрованный телефон
+
+  // encryptedPhone — зашифрованный телефон
+  encryptedPhone    String?
+
+  // address — адрес доставки в открытом виде
   address           String
-  encryptedAddress  String?     // Зашифрованный адрес
+
+  // encryptedAddress — зашифрованный адрес
+  encryptedAddress  String?
+
+  // comment — комментарий к заказу (например "не звонить в дверь")
+  // @default("") — пустая строка если комментария нет
   comment           String      @default("")
+
+  // totalPrice — итоговая сумма заказа в рублях
   totalPrice        Int
+
+  // status — текущий статус заказа
+  // Возможные значения: "pending" (новый), "confirmed" (подтверждён),
+  // "cooking" (готовится), "delivering" (в пути), "delivered" (доставлен), "cancelled" (отменён)
+  // @default("pending") — все новые заказы имеют статус "ожидает"
   status            String      @default("pending")
+
+  // userId — ID пользователя если он был авторизован при заказе
+  // Знак ? — может быть NULL если заказывали без авторизации
   userId            Int?
+
+  // user — связь с таблицей User (необязательная)
+  // User? означает что пользователь может отсутствовать
   user              User?       @relation(fields: [userId], references: [id])
+
+  // items — связь один-ко-многим: в заказе много позиций
   items             OrderItem[]
+
+  // createdAt — дата и время создания заказа
   createdAt         DateTime    @default(now())
 }
 
+// ============================================================
+// МОДЕЛЬ OrderItem — отдельная позиция в заказе
+// Каждый товар в корзине создаёт одну запись OrderItem
+// ============================================================
 model OrderItem {
+  // id — уникальный идентификатор позиции
   id          Int     @id @default(autoincrement())
+
+  // orderId — к какому заказу относится эта позиция
   orderId     Int
+
+  // order — связь с таблицей Order
   order       Order   @relation(fields: [orderId], references: [id])
+
+  // productId — ID товара (ссылка на таблицу Product)
+  // Не делаем @relation намеренно — товар могут удалить, а история заказов должна сохраниться
   productId   Int
+
+  // variantId — ID варианта товара (размер)
   variantId   Int
+
+  // quantity — количество единиц этого товара в заказе
   quantity    Int
+
+  // price — цена за единицу товара на момент заказа (в рублях)
+  // Важно: сохраняем цену на момент заказа, а не берём из таблицы Variant
+  // Это защищает от изменения цены после оформления заказа
   price       Int
+
+  // productName — название товара на момент заказа
+  // Сохраняем чтобы история заказов не менялась при переименовании товара
   productName String  @default("")
+
+  // variantSize — размер/вариант на момент заказа (например "Средняя 30 см")
   variantSize String  @default("")
+
+  // imageUrl — URL картинки товара на момент заказа
   imageUrl    String  @default("")
 }
 
+// ============================================================
+// МОДЕЛЬ Banner — рекламные баннеры для карусели на главной странице
+// ============================================================
 model Banner {
+  // id — уникальный идентификатор баннера
   id        Int      @id @default(autoincrement())
+
+  // imageUrl — URL картинки баннера (загружается через /api/upload-banner)
   imageUrl  String
+
+  // title — заголовок баннера (отображается поверх картинки)
   title     String
+
+  // subtitle — подзаголовок баннера (необязательный)
   subtitle  String?
+
+  // order — порядок отображения в карусели (меньше = раньше)
+  // @default(0) — если не указан, ставится в начало
   order     Int      @default(0)
+
+  // createdAt — дата создания баннера
   createdAt DateTime @default(now())
 }
 
+// ============================================================
+// МОДЕЛЬ Ingredient — платные добавки к товарам
+// Примеры: "Дополнительный сыр +50₽", "Бекон +80₽"
+// ============================================================
 model Ingredient {
+  // id — уникальный идентификатор ингредиента
   id         Int      @id @default(autoincrement())
+
+  // name — название добавки (например "Моцарелла", "Бекон", "Халапеньо")
   name       String
+
+  // price — цена добавки в рублях (прибавляется к цене товара)
   price      Int
+
+  // imageUrl — картинка добавки (показывается в сетке выбора добавок)
   imageUrl   String
+
+  // categories — список ID категорий через запятую ("1,3,5")
+  // Определяет к каким категориям товаров применима эта добавка
+  // Например: добавка "Бекон" доступна только для пицц (categoryId=1), не для напитков
+  // @default("") — пустая строка = добавка не привязана ни к одной категории
   categories String   @default("")
+
+  // createdAt — дата добавления ингредиента
   createdAt  DateTime @default(now())
 }
 
+// ============================================================
+// МОДЕЛЬ Combo — комбо-наборы (несколько товаров со скидкой)
+// Пример: "Пицца + Напиток + Соус = скидка 150₽"
+// ============================================================
 model Combo {
-  id          Int         @id @default(autoincrement())
-  name        String
-  imageUrl    String
-  discount    Int         @default(0)
-  createdAt   DateTime    @default(now())
-  items       ComboItem[]
+  // id — уникальный идентификатор комбо
+  id        Int         @id @default(autoincrement())
+
+  // name — название комбо (например "Семейный набор")
+  name      String
+
+  // imageUrl — картинка комбо для карточки на главной странице
+  imageUrl  String
+
+  // discount — скидка в рублях которую получает покупатель
+  // Итоговая цена = сумма всех товаров в комбо - discount
+  // @default(0) — без скидки по умолчанию
+  discount  Int         @default(0)
+
+  // createdAt — дата создания комбо
+  createdAt DateTime    @default(now())
+
+  // items — связь один-ко-многим: в комбо много позиций (товаров)
+  items     ComboItem[]
 }
 
+// ============================================================
+// МОДЕЛЬ ComboItem — отдельный товар входящий в комбо
+// ============================================================
 model ComboItem {
-  id        Int     @id @default(autoincrement())
+  // id — уникальный идентификатор позиции комбо
+  id        Int   @id @default(autoincrement())
+
+  // comboId — к какому комбо относится эта позиция
   comboId   Int
-  combo     Combo   @relation(fields: [comboId], references: [id], onDelete: Cascade)
+
+  // combo — связь с таблицей Combo
+  // onDelete: Cascade — при удалении комбо автоматически удаляются все его позиции
+  // Без Cascade пришлось бы вручную удалять позиции перед удалением комбо
+  combo     Combo @relation(fields: [comboId], references: [id], onDelete: Cascade)
+
+  // productId — ID товара входящего в комбо (ссылка на таблицу Product)
   productId Int
+
+  // variantId — ID варианта товара (какой размер входит в комбо по умолчанию)
   variantId Int
 }

@@ -1,33 +1,90 @@
 import { PrismaClient } from '@prisma/client'
 
+// ============================================================
+// SINGLETON ПАТТЕРН ДЛЯ PRISMA CLIENT
+//
+// Проблема: Next.js в режиме разработки использует hot-reload —
+// при каждом изменении файла модуль перезагружается.
+// Если создавать new PrismaClient() при каждой перезагрузке,
+// быстро исчерпаются лимиты подключений к PostgreSQL (обычно 100).
+//
+// Решение: сохраняем единственный экземпляр в globalThis.
+// globalThis — глобальный объект который НЕ сбрасывается при hot-reload.
+// В продакшене hot-reload нет, поэтому там это не нужно.
+// ============================================================
+
+// Расширяем тип globalThis чтобы TypeScript не ругался на наше кастомное поле
+// "as unknown as" — двойное приведение типов, нужно потому что
+// TypeScript не позволяет напрямую добавлять поля к globalThis
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+  prisma: PrismaClient | undefined // поле может быть PrismaClient или undefined (если ещё не создан)
 }
 
+// Создаём клиент: если уже есть в globalThis — берём его, иначе создаём новый
+// Оператор ?? (nullish coalescing) — возвращает правую часть если левая null или undefined
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({
   log: [{ level: 'error', emit: 'event' }],
+  // level: 'error' — логируем только ошибки (не query, не warn)
+  // emit: 'event' — ошибки генерируют события вместо вывода в консоль
+  // Это позволяет нам самим контролировать что попадает в лог (см. $on ниже)
 })
 
-// Фильтруем Neon auto-suspend noise
+// Подписываемся на событие ошибки от Prisma
+// (prisma as any) — приводим к any потому что $on не всегда типизирован
+// ?. — опциональный вызов, на случай если $on недоступен
 ;(prisma as any).$on?.('error', (e: any) => {
+  // Neon (облачный PostgreSQL) периодически "засыпает" при неактивности
+  // и разрывает соединения с сообщениями "terminating connection" и "Closed"
+  // Это нормальное поведение, не нужно засорять логи этими ошибками
   if (e?.message?.includes('terminating connection') || e?.message?.includes('Closed')) return
-  console.error(e)
+
+  // Все остальные ошибки БД логируем без деталей (защита от log injection)
+  console.error('Database error')
 })
 
+// В режиме разработки сохраняем экземпляр в globalThis
+// В продакшене (NODE_ENV === 'production') НЕ сохраняем — там hot-reload нет
+// и каждый воркер должен иметь свой экземпляр
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
+// ============================================================
+// ФУНКЦИЯ withRetry — повторные попытки при ошибках подключения
+//
+// Зачем нужна: облачные БД (Neon, Railway) иногда временно недоступны
+// или разрывают соединение. Вместо того чтобы сразу вернуть ошибку,
+// пробуем выполнить запрос несколько раз с паузами между попытками.
+//
+// Параметры:
+//   fn — асинхронная функция которую нужно выполнить (например запрос к БД)
+//   retries — максимальное количество попыток (по умолчанию 3)
+//
+// Возвращает: результат функции fn или бросает ошибку если все попытки исчерпаны
+// ============================================================
 export async function withRetry<T>(fn: () => Promise<T>, retries = 3): Promise<T> {
+  // Цикл от 0 до retries-1 (при retries=3: итерации 0, 1, 2)
   for (let i = 0; i < retries; i++) {
     try {
-      return await fn()
+      return await fn() // пробуем выполнить функцию, если успешно — сразу возвращаем
     } catch (e: any) {
+      // Определяем является ли ошибка проблемой подключения к БД:
+      // - 'Closed' — соединение закрыто (Neon auto-suspend)
+      // - P1001 — не удалось подключиться к серверу БД
+      // - P1002 — таймаут подключения
       const isConnectionError = e?.message?.includes('Closed') || e?.code === 'P1001' || e?.code === 'P1002'
+
       if (isConnectionError && i < retries - 1) {
+        // Это ошибка подключения И у нас ещё есть попытки — ждём и пробуем снова
+        // Задержка увеличивается с каждой попыткой: 500мс, 1000мс, 1500мс (экспоненциальный backoff)
         await new Promise(r => setTimeout(r, 500 * (i + 1)))
-        continue
+        continue // переходим к следующей итерации цикла
       }
+
+      // Либо это не ошибка подключения, либо попытки исчерпаны — пробрасываем ошибку дальше
       throw e
     }
   }
+
+  // Этот код теоретически недостижим (цикл всегда либо return либо throw)
+  // но TypeScript требует явного return/throw после цикла
   throw new Error('Max retries reached')
 }
