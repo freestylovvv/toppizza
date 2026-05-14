@@ -43,7 +43,7 @@ export default function AddressMap({ address, onAddressChange }: { address: stri
           marker.setLatLng(e.latlng) // перемещаем маркер в точку клика
           
           // Обратное геокодирование: координаты → адрес
-          const response = await fetch(`/api/geocode/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
+          const response = await fetch(`/api/geokod/obratno?lat=${e.latlng.lat}&lon=${e.latlng.lng}`)
           if (!response.ok) return
           const data = await response.json()
           if (onAddressChange) onAddressChange(data.display_name || '') // передаём адрес наверх
@@ -65,7 +65,7 @@ export default function AddressMap({ address, onAddressChange }: { address: stri
   useEffect(() => {
     if (address && mapRef.current && markerRef.current) {
       // Прямое геокодирование: адрес → координаты
-      fetch(`/api/geocode/search?q=${encodeURIComponent(address)}`)
+      fetch(`/api/geokod/poisk?q=${encodeURIComponent(address)}`)
         .then(res => res.json())
         .then(data => {
           if (data[0]) {

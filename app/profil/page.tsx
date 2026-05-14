@@ -39,7 +39,7 @@ export default function ProfilePage() {
   }, [router])
 
   const fetchUserData = async (userId: number) => {
-    const res = await fetch(`/api/user?id=${userId}`)
+    const res = await fetch(`/api/polzovatel?id=${userId}`)
     const data = await res.json()
     if (data.success) {
       setOrders(data.user.orders || [])
@@ -48,7 +48,7 @@ export default function ProfilePage() {
 
   const handleSaveName = async () => {
     setLoading(true)
-    const res = await fetch('/api/user', {
+    const res = await fetch('/api/polzovatel', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: user.id, name, phone: user.phone, birthday: user.birthday }),
@@ -63,7 +63,7 @@ export default function ProfilePage() {
 
   const handleSavePhone = async () => {
     setLoading(true)
-    const res = await fetch('/api/user', {
+    const res = await fetch('/api/polzovatel', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: user.id, name: user.name, phone, birthday: user.birthday }),
@@ -80,7 +80,7 @@ export default function ProfilePage() {
     if (!day || !month || !year) return
     setLoading(true)
     const birthday = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    const res = await fetch('/api/user', {
+    const res = await fetch('/api/polzovatel', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: user.id, name: user.name, phone: user.phone, birthday }),
@@ -95,7 +95,7 @@ export default function ProfilePage() {
 
   const handleSaveEmail = async () => {
     setLoading(true)
-    const res = await fetch('/api/user', {
+    const res = await fetch('/api/polzovatel', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: user.id, name: user.name, phone: user.phone, email, birthday: user.birthday }),

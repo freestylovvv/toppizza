@@ -122,7 +122,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         const uploadFormData = new FormData()
         uploadFormData.append('file', imageFile)
         
-        const uploadRes = await fetch('/api/upload', {
+        const uploadRes = await fetch('/api/zagruzka', {
           method: 'POST',
           body: uploadFormData,
         })
@@ -222,7 +222,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
       let imageUrl = editingProduct?.imageUrl || ''
       if (imageFile && imageFile.size > 0) {
         const fd = new FormData(); fd.append('file', imageFile)
-        const r = await fetch('/api/upload', { method: 'POST', body: fd })
+        const r = await fetch('/api/zagruzka', { method: 'POST', body: fd })
         const d = await r.json()
         if (!d.success) { setAlertMessage('Ошибка загрузки изображения'); setUploading(false); return }
         imageUrl = d.url
@@ -295,7 +295,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
       if (imageFile && imageFile.size > 0) {
         const uploadFormData = new FormData()
         uploadFormData.append('file', imageFile)
-        const uploadRes = await fetch('/api/upload', { method: 'POST', body: uploadFormData })
+        const uploadRes = await fetch('/api/zagruzka', { method: 'POST', body: uploadFormData })
         const uploadData = await uploadRes.json()
         if (!uploadData.success) {
           setAlertMessage('Ошибка загрузки изображения')
@@ -374,7 +374,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
       }
       const uploadFormData = new FormData()
       uploadFormData.append('file', imageFile)
-      const uploadRes = await fetch('/api/upload-banner', { method: 'POST', body: uploadFormData })
+      const uploadRes = await fetch('/api/zagruzka-bannera', { method: 'POST', body: uploadFormData })
       const uploadData = await uploadRes.json()
       if (!uploadData.success) {
         setAlertMessage('Ошибка загрузки изображения')
@@ -684,7 +684,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
                   let imageUrl = editingCombo?.imageUrl || ''
                   if (imageFile && imageFile.size > 0) {
                     const fd = new FormData(); fd.append('file', imageFile)
-                    const r = await fetch('/api/upload', { method: 'POST', body: fd })
+                    const r = await fetch('/api/zagruzka', { method: 'POST', body: fd })
                     const d = await r.json()
                     if (!d.success) { setAlertMessage('Ошибка загрузки изображения'); setUploading(false); return }
                     imageUrl = d.url

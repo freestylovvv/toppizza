@@ -111,7 +111,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     setError('')      // сбрасываем предыдущую ошибку
 
     try {
-      const res = await fetch('/api/auth/send-code', {
+      const res = await fetch('/api/avtorizaciya/otpravit-kod', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone }), // отправляем телефон в теле запроса
@@ -142,7 +142,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     setError('')
 
     try {
-      const res = await fetch('/api/auth/verify-code', {
+      const res = await fetch('/api/avtorizaciya/proverit-kod', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, code }), // отправляем телефон и код
@@ -184,7 +184,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     setError('')
 
     try {
-      const res = await fetch('/api/auth/verify-code', {
+      const res = await fetch('/api/avtorizaciya/proverit-kod', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, code, name }),

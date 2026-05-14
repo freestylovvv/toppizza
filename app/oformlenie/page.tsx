@@ -78,7 +78,7 @@ export default function CheckoutPage() {
       try {
         const controller = new AbortController()
         const timeout = setTimeout(() => controller.abort(), 15000)
-        const res = await fetch('/api/payment/create', {
+        const res = await fetch('/api/oplata/sozdat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: total, orderData }),
@@ -108,7 +108,7 @@ export default function CheckoutPage() {
     try {
       const controller = new AbortController()
       const timeout = setTimeout(() => controller.abort(), 15000)
-      const res = await fetch('/api/orders', {
+      const res = await fetch('/api/zakazy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
