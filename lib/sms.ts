@@ -70,6 +70,7 @@ export async function sendSms(phone: string, message: string) {
   // response.ok — HTTP статус 200-299
   // result.success — поле в ответе SMS Aero (true если SMS отправлено)
   if (!response.ok || !result.success) {
+    console.error('SMS Aero response:', JSON.stringify(result))
     throw new Error('SMS sending failed')
   }
 
