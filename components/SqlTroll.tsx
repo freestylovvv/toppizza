@@ -73,7 +73,7 @@ export default function SqlTroll({ visible }: { visible: boolean }) {
         src="/troll.jpg"
         alt=""
         draggable={false}          // запрещаем перетаскивание
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
+        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block', pointerEvents: 'none', margin: 'auto', position: 'absolute', inset: 0 }}
       />
     </div>,
     document.body // монтируем прямо в body
