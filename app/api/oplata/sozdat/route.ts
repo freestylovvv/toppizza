@@ -76,7 +76,7 @@ export async function POST(request: Request) {
         description: `Заказ Top Pizza на ${amount} ₽`,
         // Описание платежа — отображается в выписке банка пользователя
 
-        metadata: { orderData: JSON.stringify(orderData) },
+        metadata: { orderId: String(order.id) },
         // metadata — произвольные данные которые ЮКасса сохранит и вернёт в webhook
         // Сохраняем данные заказа как JSON строку
         // В webhook распарсим их обратно: JSON.parse(payment.metadata.orderData)
@@ -105,7 +105,8 @@ export async function POST(request: Request) {
       }
     }
 
-    await prisma.order.create({
+    // Создаём заказ со статусом pending_payment — подтвердим в вебхуке
+    const order = await prisma.order.create({
       data: {
         fullName: sanitizeInput(fullName),
         encryptedFullName: encryptLong(sanitizeInput(fullName)),
@@ -117,6 +118,7 @@ export async function POST(request: Request) {
         encryptedAddress: encryptLong(sanitizeInput(address)),
         comment: sanitizeInput(comment || ''),
         totalPrice,
+        status: 'pending_payment',
         userId: user?.id ?? null,
         items: {
           create: flatItems.map((item: any) => ({
