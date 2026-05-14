@@ -139,6 +139,7 @@ export default function AdminClient({ initialUsers, initialProducts, initialCate
       }
       
       const bp = parseInt(formData.get('basePrice') as string) || 0
+      console.log('basePrice from form:', formData.get('basePrice'), 'parsed:', bp)
       const variants = [
         { size: formData.get('size1'), price: bp + SIZE_SURCHARGES[0] },
         { size: formData.get('size2'), price: bp + SIZE_SURCHARGES[1] },
