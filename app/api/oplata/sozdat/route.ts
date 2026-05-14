@@ -41,6 +41,50 @@ export async function POST(request: Request) {
     }
 
     // Отправляем запрос к ЮКасса API для создания платежа
+    const { fullName, email, phone, address, comment, items, totalPrice } = orderData
+    const user = await prisma.user.findFirst({ where: { phone } })
+
+    const flatItems: any[] = []
+    for (const item of items) {
+      if (item.isCombo && Array.isArray(item.items)) {
+        for (const ci of item.items) {
+          flatItems.push({ ...ci, quantity: item.quantity, price: ci.price, comboId: item.comboId, comboName: item.comboName || '' })
+        }
+      } else {
+        flatItems.push(item)
+      }
+    }
+
+    const order = await prisma.order.create({
+      data: {
+        fullName: sanitizeInput(fullName),
+        encryptedFullName: encryptLong(sanitizeInput(fullName)),
+        email: sanitizeInput(email || ''),
+        encryptedEmail: email ? encrypt(sanitizeInput(email)) : null,
+        phone: sanitizeInput(phone),
+        encryptedPhone: encrypt(sanitizeInput(phone)),
+        address: sanitizeInput(address),
+        encryptedAddress: encryptLong(sanitizeInput(address)),
+        comment: sanitizeInput(comment || ''),
+        totalPrice,
+        status: 'pending_payment',
+        userId: user?.id ?? null,
+        items: {
+          create: flatItems.map((item: any) => ({
+            productId:   parseInt(item.productId),
+            variantId:   parseInt(item.variantId),
+            quantity:    parseInt(item.quantity),
+            price:       parseInt(item.price),
+            productName: sanitizeInput(item.name || ''),
+            variantSize: sanitizeInput(item.size || ''),
+            imageUrl:    sanitizeInput(item.imageUrl || ''),
+            comboId:     item.comboId ? parseInt(item.comboId) : null,
+            comboName:   sanitizeInput(item.comboName || ''),
+          })),
+        },
+      },
+    })
+
     const payment = await fetch('https://api.yookassa.ru/v3/payments', {
       method: 'POST',
       headers: {
@@ -89,52 +133,6 @@ export async function POST(request: Request) {
       console.error('YooKassa error', JSON.stringify(data))
       return NextResponse.json({ success: false, error: 'Payment creation failed' }, { status: 400 })
     }
-
-    // Создаём заказ в БД сразу, не дожидаясь вебхука
-    const { fullName, email, phone, address, comment, items, totalPrice } = orderData
-    const user = await prisma.user.findFirst({ where: { phone } })
-
-    const flatItems: any[] = []
-    for (const item of items) {
-      if (item.isCombo && Array.isArray(item.items)) {
-        for (const ci of item.items) {
-          flatItems.push({ ...ci, quantity: item.quantity, price: ci.price, comboId: item.comboId, comboName: item.comboName || '' })
-        }
-      } else {
-        flatItems.push(item)
-      }
-    }
-
-    // Создаём заказ со статусом pending_payment — подтвердим в вебхуке
-    const order = await prisma.order.create({
-      data: {
-        fullName: sanitizeInput(fullName),
-        encryptedFullName: encryptLong(sanitizeInput(fullName)),
-        email: sanitizeInput(email || ''),
-        encryptedEmail: email ? encrypt(sanitizeInput(email)) : null,
-        phone: sanitizeInput(phone),
-        encryptedPhone: encrypt(sanitizeInput(phone)),
-        address: sanitizeInput(address),
-        encryptedAddress: encryptLong(sanitizeInput(address)),
-        comment: sanitizeInput(comment || ''),
-        totalPrice,
-        status: 'pending_payment',
-        userId: user?.id ?? null,
-        items: {
-          create: flatItems.map((item: any) => ({
-            productId:   parseInt(item.productId),
-            variantId:   parseInt(item.variantId),
-            quantity:    parseInt(item.quantity),
-            price:       parseInt(item.price),
-            productName: sanitizeInput(item.name || ''),
-            variantSize: sanitizeInput(item.size || ''),
-            imageUrl:    sanitizeInput(item.imageUrl || ''),
-            comboId:     item.comboId ? parseInt(item.comboId) : null,
-            comboName:   sanitizeInput(item.comboName || ''),
-          })),
-        },
-      },
-    })
 
     return NextResponse.json({
       success: true,
