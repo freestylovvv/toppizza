@@ -65,12 +65,10 @@ export async function sendSms(phone: string, message: string) {
 
   // Парсим JSON ответ от API
   const result = await response.json()
+  console.log('SMS Aero result:', JSON.stringify(result))
 
-  // Проверяем успешность:
-  // response.ok — HTTP статус 200-299
-  // result.success — поле в ответе SMS Aero (true если SMS отправлено)
   if (!response.ok || !result.success) {
-    console.error('SMS Aero response:', JSON.stringify(result))
+    console.error('SMS Aero error:', JSON.stringify(result))
     throw new Error('SMS sending failed')
   }
 
