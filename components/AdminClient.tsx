@@ -7,7 +7,6 @@ import ConfirmModal from '@/components/ConfirmModal'
 
 type AdminClientProps = {
   initialUsers: any[]
-  initialCodes: any[]
   initialProducts: any[]
   initialCategories: any[]
   initialOrders: any[]
@@ -15,12 +14,11 @@ type AdminClientProps = {
   initialBanners: any[]
 }
 
-export default function AdminClient({ initialUsers, initialCodes, initialProducts, initialCategories, initialOrders, initialIngredients, initialBanners }: AdminClientProps) {
+export default function AdminClient({ initialUsers, initialProducts, initialCategories, initialOrders, initialIngredients, initialBanners }: AdminClientProps) {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
   const [tab, setTab] = useState('users')
   const [users, setUsers] = useState<any[]>(initialUsers)
-  const [codes, setCodes] = useState<any[]>(initialCodes)
   const [products, setProducts] = useState<any[]>(initialProducts)
   const [categories, setCategories] = useState<any[]>(initialCategories)
   const [orders, setOrders] = useState<any[]>(initialOrders)
@@ -66,9 +64,8 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
   }, [router])
 
   const loadData = async () => {
-    const [usersRes, codesRes, productsRes, categoriesRes, ordersRes, ingredientsRes, bannersRes] = await Promise.all([
+    const [usersRes, productsRes, categoriesRes, ordersRes, ingredientsRes, bannersRes] = await Promise.all([
       fetch('/api/admin/polzovateli'),
-      fetch('/api/admin/kody'),
       fetch('/api/admin/tovary'),
       fetch('/api/admin/kategorii'),
       fetch('/api/admin/zakazy'),
@@ -77,7 +74,6 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
     ])
     
     const usersData = await usersRes.json()
-    const codesData = await codesRes.json()
     const productsData = await productsRes.json()
     const categoriesData = await categoriesRes.json()
     const ordersData = await ordersRes.json()
@@ -85,7 +81,6 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
     const bannersData = await bannersRes.json()
     
     if (usersData.success) setUsers(usersData.users)
-    if (codesData.success) setCodes(codesData.codes)
     if (productsData.success) setProducts(productsData.products)
     if (categoriesData.success) setCategories(categoriesData.categories)
     if (ordersData.success) setOrders(ordersData.orders)
@@ -417,9 +412,9 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         </div>
 
         <div className="admin-tabs" style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
-          {['users', 'codes', 'products', 'categories', 'orders', 'ingredients', 'banners', 'combos'].map(t => (
+          {['users', 'products', 'categories', 'orders', 'ingredients', 'banners', 'combos'].map(t => (
             <button key={t} onClick={() => setTab(t)} style={{ padding: '12px 24px', backgroundColor: tab === t ? '#ff6900' : '#fff', color: tab === t ? '#fff' : '#000', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '15px', fontWeight: '500' }}>
-              {t === 'users' ? 'Пользователи' : t === 'codes' ? 'Коды' : t === 'products' ? 'Товары' : t === 'categories' ? 'Категории' : t === 'orders' ? 'Заказы' : t === 'ingredients' ? 'Ингредиенты' : t === 'banners' ? 'Баннеры' : 'Комбо'}
+              {t === 'users' ? 'Пользователи' : t === 'products' ? 'Товары' : t === 'categories' ? 'Категории' : t === 'orders' ? 'Заказы' : t === 'ingredients' ? 'Ингредиенты' : t === 'banners' ? 'Баннеры' : 'Комбо'}
             </button>
           ))}
         </div>
@@ -458,31 +453,6 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
           </div>
         )}
 
-        {tab === 'codes' && (
-          <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', color: '#000' }}>Коды подтверждения</h2>
-            <div className="admin-table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #f0f0f0' }}>
-                  <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b6b6b' }}>Телефон</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b6b6b' }}>Код</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b6b6b' }}>Истекает</th>
-                  <th style={{ padding: '12px', textAlign: 'left', fontSize: '14px', fontWeight: '600', color: '#6b6b6b' }}>Создан</th>
-                </tr>
-              </thead>
-              <tbody>
-                {codes.map(c => (
-                  <tr key={c.id} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                    <td style={{ padding: '12px', fontSize: '14px' }}>{c.phone}</td>
-                    <td style={{ padding: '12px', fontSize: '18px', fontWeight: '700', color: '#ff6900' }}>{c.code}</td>
-                    <td style={{ padding: '12px', fontSize: '14px' }}>{new Date(c.expiresAt).toLocaleString('ru-RU')}</td>
-                    <td style={{ padding: '12px', fontSize: '14px' }}>{new Date(c.createdAt).toLocaleString('ru-RU')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table></div>
-          </div>
-        )}
 
         {tab === 'products' && (
           <div className="admin-section" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '24px' }}>
