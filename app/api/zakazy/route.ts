@@ -63,7 +63,9 @@ export async function POST(request: Request) {
     // - items.length === 0 — пустой массив
     if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ success: false, error: 'Invalid items' }, { status: 400 })
-    }: Ищем пользователя по телефону
+    }
+
+    // Ищем пользователя по телефону
     // Если пользователь авторизован — привязываем заказ к его аккаунту
     // findFirst — возвращает первую запись или null (не бросает ошибку)
     const user = await prisma.user.findFirst({ where: { phone: sanitizedPhone } })
