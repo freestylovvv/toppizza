@@ -70,7 +70,7 @@ export default function SqlTroll({ visible }: { visible: boolean }) {
       {/* Картинка МВД на весь экран */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/mvd.jpg"
+        src="/troll.jpg"
         alt=""
         draggable={false}          // запрещаем перетаскивание
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
