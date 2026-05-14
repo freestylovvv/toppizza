@@ -51,10 +51,9 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
   const [selectedVariant, setSelectedVariant] = useState(middleVariant)
   const [isHovered, setIsHovered] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)   // адаптив: одна колонка на мобильных
-  const [mounted, setMounted] = useState(false)     // защита от SSR для createPortal
-  const [removedIngredients, setRemovedIngredients] = useState<string[]>([])  // убранные ингредиенты
-  const [addedIngredients, setAddedIngredients] = useState<string[]>([])      // добавленные платные добавки
+  const [mounted, setMounted] = useState(false)
+  const [removedIngredients, setRemovedIngredients] = useState<string[]>([])
+  const [addedIngredients, setAddedIngredients] = useState<string[]>([])
 
   // Парсим строки ингредиентов в массивы
   const productIngredients = product.ingredients ? product.ingredients.split(',').map(i => i.trim()) : []
@@ -73,10 +72,6 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
       setSelectedVariant(product.variants.length > 1 ? product.variants[1] : product.variants[0])
     }
     setMounted(true)
-    const handleResize = () => setIsMobile(window.innerWidth <= 768)
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
   }, [product.variants, selectedVariant])
   
   // Размер картинки в модалке зависит от выбранного размера пиццы
@@ -189,12 +184,12 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
       {/* Модалка товара — рендерится через портал прямо в body */}
       {mounted && showModal && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowModal(false)}>
-          <div style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 4px 32px rgba(255,105,0,0.08), inset 0 1.5px 0 rgba(255,255,255,0.8)', borderRadius: '24px', maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-inner" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#6b6b6b', zIndex: 1 }}>×</button>
             
             {/* Двухколоночная сетка: картинка слева, настройки справа */}
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px', padding: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="modal-grid">
+              <div className="modal-img-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={product.imageUrl} alt={product.name} style={{ width: getImageSize(), height: getImageSize(), objectFit: 'contain', transition: 'all 0.3s' }} />
               </div>

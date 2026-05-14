@@ -509,3 +509,58 @@ input {
     padding: 12px !important;
   }
 }
+
+/* Modal classes */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-inner {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(24px) saturate(180%) brightness(1.1);
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.1);
+  border: 1px solid rgba(255,255,255,0.9);
+  box-shadow: 0 4px 32px rgba(255,105,0,0.08), inset 0 1.5px 0 rgba(255,255,255,0.8);
+  border-radius: 24px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 24px;
+}
+
+@media (max-width: 640px) {
+  .modal-inner {
+    border-radius: 16px;
+    max-height: 92vh;
+  }
+
+  .modal-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 16px;
+  }
+
+  .modal-img-wrap {
+    display: none !important;
+  }
+
+  .ingredients-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
