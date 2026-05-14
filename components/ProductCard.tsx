@@ -37,10 +37,8 @@ type SauceProduct = {
   price: number
 }
 
-// Неиспользуемые базовые ингредиенты (оставлены для будущего использования)
-const BASE_INGREDIENTS = ['Моцарелла', 'Томатный соус', 'Итальянские травы']
-
-export default function ProductCard({ product, allIngredients = [], sauces = [] }: { product: Product; allIngredients?: Ingredient[]; sauces?: SauceProduct[] }) {
+export default function ProductCard({ product, allIngredients = [] }: { product: Product & { relatedProducts?: SauceProduct[] }; allIngredients?: Ingredient[] }) {
+  const sauces = product.relatedProducts || []
   // По умолчанию выбираем средний вариант (индекс 1), если есть хотя бы 2 варианта
   const middleVariant = product.variants.length > 1 ? product.variants[1] : product.variants[0]
   const [selectedVariant, setSelectedVariant] = useState(middleVariant)
@@ -296,7 +294,7 @@ export default function ProductCard({ product, allIngredients = [], sauces = [] 
                 </>
                 )}
 
-                {(['pizza', 'snack', 'combo'].includes(product.category?.type)) && sauces.length > 0 && (
+                {sauces.length > 0 && (
                   <div style={{ marginBottom: '20px' }}>
                     <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>Соусы</h3>
                     <div className="ingredients-grid">

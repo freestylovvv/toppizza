@@ -150,6 +150,7 @@ export default function AdminClient({ initialUsers, initialProducts, initialCate
         name: formData.get('name'),
         imageUrl,
         categoryId: formData.get('categoryId'),
+        relatedCategoryId: formData.get('relatedCategoryId') || null,
         ingredients: formData.get('ingredients'),
         requiredIngredients: formData.get('requiredIngredients'),
         removableIngredients: formData.get('removableIngredients'),
@@ -750,6 +751,13 @@ export default function AdminClient({ initialUsers, initialProducts, initialCate
                   }}
                   style={{ width: '100%', padding: '12px', marginBottom: '12px', border: '1px solid #e0e0e0', borderRadius: '8px', fontSize: '15px', outline: 'none' }}>
                   <option value="">Выберите категорию</option>
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+
+                {/* Выбор сопутствующей категории (соусы, напитки и т.д.) */}
+                <select name="relatedCategoryId" defaultValue={editingProduct?.relatedCategoryId || ''}
+                  style={{ width: '100%', padding: '12px', marginBottom: '12px', border: '1px solid #e0e0e0', borderRadius: '8px', fontSize: '15px', outline: 'none' }}>
+                  <option value="">Не предлагать доп. товары</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
 

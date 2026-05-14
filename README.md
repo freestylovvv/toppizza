@@ -13,46 +13,11 @@
 - **Nodemailer** — отправка email
 - **Leaflet / React Leaflet** — карта для выбора адреса доставки
 
-## Установка и запуск
-
-### 1. Настройка переменных окружения
-
-Создайте `.env` и заполните:
-
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/toppizza?schema=public"
-DIRECT_URL="postgresql://user:password@localhost:5432/toppizza?schema=public"
-```
-
-> `DIRECT_URL` нужен для Prisma при работе через connection pooler (Neon, Railway и т.п.). На VPS можно указать тот же URL что и `DATABASE_URL`.
-
-### 2. Инициализация базы данных
-
-```bash
-npm run prisma:generate   # генерация Prisma клиента
-npm run prisma:push       # применение схемы к БД
-npm run prisma:seed       # заполнение начальными данными
-```
-
-### 3. Запуск
-
-```bash
-npm run dev     # разработка (порт 6767)
-npm run build   # сборка
-npm run start   # продакшн (порт 6767)
-```
 
 ## Деплой на VPS
 
-Сайт запущен на VPS рег.ру. Приложение слушает на порту `6767` (настроено в `package.json`).
+Сайт запущен на VPS рег.ру. Приложение слушает на порту.
 
-Применение схемы на сервере:
-
-```bash
-ssh user@top-pizza.shop
-cd /path/to/toppizza
-npx prisma db push
-```
 
 ## Функционал
 

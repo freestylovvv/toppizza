@@ -53,16 +53,27 @@ export default async function Home() {
       prisma.combo.findMany({ include: { items: true }, orderBy: { createdAt: 'desc' } }),
     ])
 
-    // Формируем структуру категорий с товарами для передачи в компонент
+    // Соусы больше не нужны отдельно — каждый товар сам знает что предлагать
+    // Формируем словарь: categoryId → список товаров этой категории
+    const productsByCategory: Record<number, { id: number; name: string; imageUrl: string; price: number }[]> = {}
+    productsData.forEach(p => {
+      const price = p.variants[0]?.price || 0
+      if (!productsByCategory[p.category.id]) productsByCategory[p.category.id] = []
+      productsByCategory[p.category.id].push({ id: p.id, name: p.name, imageUrl: p.imageUrl, price })
+    })
+
+    // Добавляем relatedProducts к каждому товару
+    const productsWithRelated = productsData.map(p => ({
+      ...p,
+      relatedProducts: p.relatedCategoryId ? (productsByCategory[p.relatedCategoryId] || []) : [],
+    }))
+
     const categories = categoriesData
       .map((cat) => ({
         id: cat.id,
         name: cat.name,
-        // Фильтруем товары: берём только те что принадлежат этой категории
-        // Сравниваем p.category.id (объект категории) с cat.id
-        products: productsData.filter((p) => p.category.id === cat.id),
+        products: productsWithRelated.filter((p) => p.category.id === cat.id),
       }))
-      // Убираем категории без товаров — нет смысла показывать пустые разделы
       .filter((cat) => cat.products.length > 0)
 
     // Выбираем соусы отдельно для показа в модалке товара
@@ -78,16 +89,13 @@ export default async function Home() {
         price: p.variants[0]?.price || 0 // берём цену первого варианта (у соусов обычно один)
       }))
 
-    // Передаём все данные в клиентский компонент HomeClient
-    // Серверный компонент не может иметь интерактивность (useState и т.д.)
-    // поэтому вся UI логика вынесена в HomeClient ('use client')
     return <HomeClient
       categories={categories}
       banners={banners}
       allIngredients={allIngredients}
-      sauces={sauces}
+      sauces={[]}
       combos={combos}
-      allProducts={productsData}
+      allProducts={productsWithRelated}
     />
   } catch (error) {
     // Если БД недоступна — не крашим сайт, показываем пустую страницу

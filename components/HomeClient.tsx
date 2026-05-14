@@ -277,7 +277,7 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
               <div className="products-grid">
                 {category.products.map((product) => (
                   // Соусы передаём только для пицц, закусок и комбо — не для напитков
-                  <ProductCard key={product.id} product={product} allIngredients={allIngredients} sauces={['pizza','snack'].includes(product.category?.type) ? sauces : []} />
+                  <ProductCard key={product.id} product={product} allIngredients={allIngredients} />
                 ))}
               </div>
             </section>
