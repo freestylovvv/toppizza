@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 import { prisma } from '@/lib/prisma'
-import { sanitizeInput, encrypt } from '@/lib/security'
+import { sanitizeInput, encrypt, encryptLong } from '@/lib/security'
 // uuid — библиотека для генерации уникальных идентификаторов
 // v4 — версия 4 (случайный UUID), пример: "550e8400-e29b-41d4-a716-446655440000"
 
@@ -94,28 +94,42 @@ export async function POST(request: Request) {
     // Создаём заказ в БД сразу, не дожидаясь вебхука
     const { fullName, email, phone, address, comment, items, totalPrice } = orderData
     const user = await prisma.user.findFirst({ where: { phone } })
+
+    const flatItems: any[] = []
+    for (const item of items) {
+      if (item.isCombo && Array.isArray(item.items)) {
+        for (const ci of item.items) {
+          flatItems.push({ ...ci, quantity: item.quantity, price: ci.price, comboId: item.comboId, comboName: item.comboName || '' })
+        }
+      } else {
+        flatItems.push(item)
+      }
+    }
+
     await prisma.order.create({
       data: {
         fullName: sanitizeInput(fullName),
-        encryptedFullName: encrypt(sanitizeInput(fullName)),
+        encryptedFullName: encryptLong(sanitizeInput(fullName)),
         email: sanitizeInput(email || ''),
         encryptedEmail: email ? encrypt(sanitizeInput(email)) : null,
         phone: sanitizeInput(phone),
         encryptedPhone: encrypt(sanitizeInput(phone)),
         address: sanitizeInput(address),
-        encryptedAddress: encrypt(sanitizeInput(address)),
+        encryptedAddress: encryptLong(sanitizeInput(address)),
         comment: sanitizeInput(comment || ''),
         totalPrice,
         userId: user?.id ?? null,
         items: {
-          create: items.map((item: any) => ({
-            productId:   parseInt(item.productId) || 0,
-            variantId:   parseInt(item.variantId) || 0,
+          create: flatItems.map((item: any) => ({
+            productId:   parseInt(item.productId),
+            variantId:   parseInt(item.variantId),
             quantity:    parseInt(item.quantity),
             price:       parseInt(item.price),
-            productName: sanitizeInput(item.name || item.comboName || ''),
-            variantSize: sanitizeInput(item.size || 'Комбо'),
-            imageUrl:    sanitizeInput(item.imageUrl || item.comboImageUrl || ''),
+            productName: sanitizeInput(item.name || ''),
+            variantSize: sanitizeInput(item.size || ''),
+            imageUrl:    sanitizeInput(item.imageUrl || ''),
+            comboId:     item.comboId ? parseInt(item.comboId) : null,
+            comboName:   sanitizeInput(item.comboName || ''),
           })),
         },
       },
