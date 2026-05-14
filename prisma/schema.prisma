@@ -80,7 +80,7 @@ model Product {
   // relatedCategoryId — ID категории товаров которые предлагаются к этому товару
   // Например: к пицце предлагаем категорию "Соусы"
   // NULL — ничего не предлагать
-  relatedCategoryId    Int?        @default(null)
+  relatedCategoryId    Int?
 
   // categoryId — внешний ключ, ID категории к которой принадлежит товар
   // Это реальная колонка в таблице products в БД
