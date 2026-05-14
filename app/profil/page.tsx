@@ -134,14 +134,16 @@ export default function ProfilePage() {
     // Добавляем комбо целиком
     Object.entries(comboGroups).forEach(([comboId, comboItems]) => {
       const first = comboItems[0]
+      const totalPrice = comboItems.reduce((s: number, i: any) => s + i.price, 0)
+      const discount = first.comboDiscount || 0
       cart.push({
         isCombo: true,
         comboId: parseInt(comboId),
         comboName: first.comboName,
         comboImageUrl: first.comboImageUrl,
-        discount: 0,
-        totalPrice: comboItems.reduce((s: number, i: any) => s + i.price, 0),
-        finalPrice: comboItems.reduce((s: number, i: any) => s + i.price, 0),
+        discount,
+        totalPrice,
+        finalPrice: Math.max(0, totalPrice - discount),
         quantity: first.quantity,
         items: comboItems.map((i: any) => ({
           productId: i.productId, variantId: i.variantId,
