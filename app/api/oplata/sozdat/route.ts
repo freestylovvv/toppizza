@@ -86,8 +86,7 @@ export async function POST(request: Request) {
     const data = await payment.json() // парсим ответ ЮКасса
 
     if (!payment.ok) {
-      // HTTP статус не 2xx — ошибка от ЮКасса
-      console.error('YooKassa error')
+      console.error('YooKassa error', JSON.stringify(data))
       return NextResponse.json({ success: false, error: 'Payment creation failed' }, { status: 400 })
     }
 
