@@ -282,6 +282,7 @@ export default function ComboCard({
                 </button>
               )}
             </div>
+            </div>
           </div>
         </div>,
         document.body
