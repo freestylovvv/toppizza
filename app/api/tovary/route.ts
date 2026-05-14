@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// Кешируем ответ на 60 секунд (ISR — Incremental Static Regeneration)
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 // GET /api/products — возвращает все товары с категориями и вариантами
 export async function GET() {
@@ -14,7 +13,6 @@ export async function GET() {
       },
     })
     return NextResponse.json(products, {
-      // Кешируем на CDN на 60 секунд, устаревший кеш отдаём ещё 5 минут пока обновляется
       headers: { 'Cache-Control': 's-maxage=60, stale-while-revalidate=300' },
     })
   } catch (error) {

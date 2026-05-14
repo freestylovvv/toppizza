@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/admin/orders — возвращает последние 50 заказов для админ-панели
 export async function GET() {
   try {
