@@ -63,9 +63,7 @@ export async function POST(request: Request) {
     // - items.length === 0 — пустой массив
     if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ success: false, error: 'Invalid items' }, { status: 400 })
-    }
-
-    // ШАГ 3: Ищем пользователя по телефону
+    }: Ищем пользователя по телефону
     // Если пользователь авторизован — привязываем заказ к его аккаунту
     // findFirst — возвращает первую запись или null (не бросает ошибку)
     const user = await prisma.user.findFirst({ where: { phone: sanitizedPhone } })
@@ -76,6 +74,22 @@ export async function POST(request: Request) {
     const encryptedEmail    = sanitizedEmail ? encrypt(sanitizedEmail) : null
     const encryptedPhone    = encrypt(sanitizedPhone)
     const encryptedAddress  = encryptLong(sanitizedAddress)
+
+    // Раскрываем комбо в отдельные позиции
+    const flatItems: any[] = []
+    for (const item of items) {
+      if (item.isCombo && Array.isArray(item.items)) {
+        for (const ci of item.items) {
+          flatItems.push({ ...ci, quantity: item.quantity, price: ci.price })
+        }
+      } else {
+        flatItems.push(item)
+      }
+    }
+
+    if (flatItems.length === 0) {
+      return NextResponse.json({ success: false, error: 'Invalid items' }, { status: 400 })
+    }
 
     // ШАГ 5: Создаём заказ в БД
     // Prisma позволяет создать заказ и все его позиции за один запрос (вложенный create)
@@ -97,7 +111,7 @@ export async function POST(request: Request) {
         // ?? null — если undefined, используем null (Prisma принимает null, не undefined)
 
         items: {
-          create: items.map((item: any) => ({
+          create: flatItems.map((item: any) => ({
             // map() — трансформируем каждый элемент корзины в формат для БД
             // parseInt() — конвертируем в число (из корзины могут прийти строки)
             productId:   parseInt(item.productId),
