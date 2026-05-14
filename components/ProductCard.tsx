@@ -27,18 +27,25 @@ type Ingredient = {
   name: string
   price: number
   imageUrl: string
-  categories: string
+  categories: string // ID категорий через запятую ("1,3,5")
 }
 
-type SauceProduct = {
+// RelatedProduct — сопутствующий товар (соус, напиток и т.д.)
+// Берётся из категории указанной в relatedCategoryId товара
+type RelatedProduct = {
   id: number
   name: string
   imageUrl: string
   price: number
 }
 
-export default function ProductCard({ product, allIngredients = [] }: { product: Product & { relatedProducts?: SauceProduct[] }; allIngredients?: Ingredient[] }) {
+// product & { relatedProducts? } — расширяем тип Product полем relatedProducts
+// которое добавляется в app/page.tsx на основе relatedCategoryId
+export default function ProductCard({ product, allIngredients = [] }: { product: Product & { relatedProducts?: RelatedProduct[] }; allIngredients?: Ingredient[] }) {
+  // relatedProducts — сопутствующие товары (соусы, напитки и т.д.)
+  // Задаются в админке через поле "Предлагать к заказу"
   const sauces = product.relatedProducts || []
+
   // По умолчанию выбираем средний вариант (индекс 1), если есть хотя бы 2 варианта
   const middleVariant = product.variants.length > 1 ? product.variants[1] : product.variants[0]
   const [selectedVariant, setSelectedVariant] = useState(middleVariant)
@@ -48,16 +55,18 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
   const [mounted, setMounted] = useState(false)     // защита от SSR для createPortal
   const [removedIngredients, setRemovedIngredients] = useState<string[]>([])  // убранные ингредиенты
   const [addedIngredients, setAddedIngredients] = useState<string[]>([])      // добавленные платные добавки
+
   // Парсим строки ингредиентов в массивы
   const productIngredients = product.ingredients ? product.ingredients.split(',').map(i => i.trim()) : []
   const requiredIngredients = product.requiredIngredients ? product.requiredIngredients.split(',').map(i => i.trim()) : []
   const removableIngredients = product.removableIngredients ? product.removableIngredients.split(',').map(i => i.trim()) : []
 
-  // Фильтруем добавки по categoryId товара
+  // Фильтруем платные добавки по categoryId товара
+  // Например: добавка "Бекон" доступна только для пицц (categories: "1")
   const extraIngredients = allIngredients.filter(ing =>
     ing.categories.split(',').includes(String(product.categoryId))
   )
-  const [selectedSauces, setSelectedSauces] = useState<number[]>([]) // выбранные соусы (ID)
+  const [selectedSauces, setSelectedSauces] = useState<number[]>([]) // ID выбранных сопутствующих товаров
 
   useEffect(() => {
     if (!selectedVariant && product.variants.length > 0) {
@@ -83,25 +92,28 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
     return '340px'
   }
 
+  // Переключение убираемого ингредиента (клик зачёркивает/восстанавливает)
   const toggleRemoveIngredient = (ing: string) => {
-    setRemovedIngredients(prev => {
-      const newRemoved = prev.includes(ing) ? prev.filter(i => i !== ing) : [...prev, ing]
-      return newRemoved
-    })
-  }
-
-  const toggleAddIngredient = (ing: string) => {
-    setAddedIngredients(prev => 
+    setRemovedIngredients(prev =>
       prev.includes(ing) ? prev.filter(i => i !== ing) : [...prev, ing]
     )
   }
 
+  // Переключение платной добавки (клик добавляет/убирает)
+  const toggleAddIngredient = (ing: string) => {
+    setAddedIngredients(prev =>
+      prev.includes(ing) ? prev.filter(i => i !== ing) : [...prev, ing]
+    )
+  }
+
+  // Переключение сопутствующего товара (соуса и т.д.)
   const toggleSauce = (sauceId: number) => {
-    setSelectedSauces(prev => 
+    setSelectedSauces(prev =>
       prev.includes(sauceId) ? prev.filter(s => s !== sauceId) : [...prev, sauceId]
     )
   }
 
+  // Итоговая цена = цена варианта + платные добавки + сопутствующие товары
   const getTotalPrice = () => {
     if (!selectedVariant) return 0
     const extraPrice = addedIngredients.reduce((sum, ingName) => {
@@ -115,6 +127,7 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
     return selectedVariant.price + extraPrice + saucePrice
   }
 
+  // Добавление в корзину — сохраняем в localStorage и диспатчим событие
   const addToCart = () => {
     if (!selectedVariant) return
     const cart = JSON.parse(localStorage.getItem('cart') || '[]')
@@ -127,7 +140,6 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
       quantity: 1,
       imageUrl: product.imageUrl,
     })
-    
     localStorage.setItem('cart', JSON.stringify(cart))
     window.dispatchEvent(new Event('cartUpdated'))
     setShowModal(false)
@@ -138,6 +150,7 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
 
   return (
     <>
+      {/* Карточка товара в каталоге */}
       <div style={{
         backgroundColor: '#f9f9f9',
         borderRadius: '12px',
@@ -173,11 +186,13 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
         </div>
       </div>
 
+      {/* Модалка товара — рендерится через портал прямо в body */}
       {mounted && showModal && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setShowModal(false)}>
           <div style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', WebkitBackdropFilter: 'blur(24px) saturate(180%) brightness(1.1)', border: '1px solid rgba(255,255,255,0.9)', boxShadow: '0 4px 32px rgba(255,105,0,0.08), inset 0 1.5px 0 rgba(255,255,255,0.8)', borderRadius: '24px', maxWidth: '900px', width: '100%', maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setShowModal(false)} style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', fontSize: '28px', cursor: 'pointer', color: '#6b6b6b', zIndex: 1 }}>×</button>
             
+            {/* Двухколоночная сетка: картинка слева, настройки справа */}
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '24px', padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -188,6 +203,7 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
                 <h2 style={{ fontSize: '26px', fontWeight: '700', marginBottom: '12px' }}>{product.name}</h2>
                 {product.ingredients && <p style={{ fontSize: '14px', color: '#6b6b6b', marginBottom: '20px' }}>{product.ingredients}</p>}
                 
+                {/* Переключатель размеров — только если больше одного варианта и не десерт */}
                 {product.category?.type !== 'dessert' && product.variants.length > 1 && (
                   <div style={{ marginBottom: '20px' }}>
                     <div style={{ display: 'flex', gap: '6px', backgroundColor: '#f9f9f9', padding: '4px', borderRadius: '10px' }}>
@@ -214,11 +230,13 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
                   </div>
                 )}
 
+                {/* Состав и убираемые ингредиенты — только для пицц */}
                 {product.category?.type === 'pizza' && (requiredIngredients.length > 0 || removableIngredients.length > 0) && (
                 <>
                 <div style={{ marginBottom: '20px' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>Состав</h3>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {/* Обязательные ингредиенты — серые, некликабельные */}
                     {requiredIngredients.map(ing => (
                       <div
                         key={ing}
@@ -235,6 +253,7 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
                         {ing}
                       </div>
                     ))}
+                    {/* Убираемые ингредиенты — кликабельные, клик зачёркивает */}
                     {removableIngredients.map(ing => (
                       <div
                         key={ing}
@@ -262,6 +281,7 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
                   </div>
                 </div>
 
+                {/* Платные добавки — только если есть добавки для этой категории */}
                 {extraIngredients.length > 0 && (
                 <div style={{ marginBottom: '20px' }}>
                   <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>Добавить по вкусу</h3>
@@ -294,9 +314,10 @@ export default function ProductCard({ product, allIngredients = [] }: { product:
                 </>
                 )}
 
+                {/* Сопутствующие товары — показываются если relatedCategoryId задан в админке */}
                 {sauces.length > 0 && (
                   <div style={{ marginBottom: '20px' }}>
-                    <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>Соусы</h3>
+                    <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>Добавить к заказу</h3>
                     <div className="ingredients-grid">
                       {sauces.map(sauce => (
                         <div

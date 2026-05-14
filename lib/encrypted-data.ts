@@ -1,5 +1,5 @@
 import { prisma } from './prisma';
-import { encrypt, decrypt } from './security';
+import { encrypt, decrypt, encryptLong, decryptLong } from './security';
 
 // ============================================================
 // УТИЛИТЫ ДЛЯ РАБОТЫ С ЗАШИФРОВАННЫМИ ДАННЫМИ
@@ -80,10 +80,10 @@ export const getOrderWithDecryptedData = async (orderId: number) => {
     ...order, // копируем все поля заказа
     // Для каждого зашифрованного поля: если есть зашифрованная версия — расшифровываем,
     // иначе берём открытую версию (обратная совместимость со старыми заказами)
-    fullName: order.encryptedFullName ? decrypt(order.encryptedFullName) : order.fullName,
-    email:    order.encryptedEmail    ? decrypt(order.encryptedEmail)    : order.email,
-    phone:    order.encryptedPhone    ? decrypt(order.encryptedPhone)    : order.phone,
-    address:  order.encryptedAddress  ? decrypt(order.encryptedAddress)  : order.address,
+    fullName: order.encryptedFullName ? decryptLong(order.encryptedFullName) : order.fullName,
+    email:    order.encryptedEmail    ? decrypt(order.encryptedEmail)         : order.email,
+    phone:    order.encryptedPhone    ? decrypt(order.encryptedPhone)         : order.phone,
+    address:  order.encryptedAddress  ? decryptLong(order.encryptedAddress)  : order.address,
   };
 };
 
@@ -155,9 +155,9 @@ export const getOrdersWithDecryptedData = async (limit = 50) => {
   return orders.map(order => ({
     ...order, // копируем все поля заказа
     // Расшифровываем каждое поле (паттерн тот же что в getOrderWithDecryptedData)
-    fullName: order.encryptedFullName ? decrypt(order.encryptedFullName) : order.fullName,
-    email:    order.encryptedEmail    ? decrypt(order.encryptedEmail)    : order.email,
-    phone:    order.encryptedPhone    ? decrypt(order.encryptedPhone)    : order.phone,
-    address:  order.encryptedAddress  ? decrypt(order.encryptedAddress)  : order.address,
+    fullName: order.encryptedFullName ? decryptLong(order.encryptedFullName) : order.fullName,
+    email:    order.encryptedEmail    ? decrypt(order.encryptedEmail)         : order.email,
+    phone:    order.encryptedPhone    ? decrypt(order.encryptedPhone)         : order.phone,
+    address:  order.encryptedAddress  ? decryptLong(order.encryptedAddress)  : order.address,
   }));
 };

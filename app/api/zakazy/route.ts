@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendSms } from '@/lib/sms'
-import { sanitizeInput, validatePhone, validateEmail, encrypt } from '@/lib/security'
+import { sanitizeInput, validatePhone, validateEmail, encrypt, encryptLong } from '@/lib/security'
 
 // ============================================================
 // POST /api/orders
@@ -72,11 +72,10 @@ export async function POST(request: Request) {
 
     // ШАГ 4: Шифруем личные данные перед сохранением в БД
     // encrypt() использует RSA публичный ключ
-    const encryptedFullName = encrypt(sanitizedFullName)
+    const encryptedFullName = encryptLong(sanitizedFullName)
     const encryptedEmail    = sanitizedEmail ? encrypt(sanitizedEmail) : null
-    // Тернарный оператор: если email есть — шифруем, если нет — null
     const encryptedPhone    = encrypt(sanitizedPhone)
-    const encryptedAddress  = encrypt(sanitizedAddress)
+    const encryptedAddress  = encryptLong(sanitizedAddress)
 
     // ШАГ 5: Создаём заказ в БД
     // Prisma позволяет создать заказ и все его позиции за один запрос (вложенный create)

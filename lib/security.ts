@@ -70,23 +70,47 @@ const { privateKey, publicKey } = getKeys();
 // Пример: encrypt("test@mail.ru") → "aGVsbG8gd29ybGQ..."
 // ============================================================
 export const encrypt = (text: string): string => {
-  const buffer = Buffer.from(text, 'utf8'); // строка → бинарные данные в кодировке UTF-8
-  const encrypted = crypto.publicEncrypt(publicKey, buffer); // шифруем публичным ключом
-  return encrypted.toString('base64'); // бинарные данные → текст Base64
+  const buffer = Buffer.from(text, 'utf8');
+  const encrypted = crypto.publicEncrypt(publicKey, buffer);
+  return encrypted.toString('base64');
+};
+
+export const decrypt = (encryptedText: string): string => {
+  const buffer = Buffer.from(encryptedText, 'base64');
+  const decrypted = crypto.privateDecrypt(privateKey, buffer);
+  return decrypted.toString('utf8');
 };
 
 // ============================================================
-// ФУНКЦИЯ decrypt — расшифровывает строку приватным ключом RSA
+// Гибридное шифрование AES-256-GCM + RSA для длинных строк
 //
-// Обратная операция к encrypt:
-// 1. Декодируем Base64 обратно в бинарные данные
-// 2. Расшифровываем приватным ключом
-// 3. Конвертируем бинарные данные обратно в строку
+// RSA ограничен ~245 байт — не подходит для адресов и комментариев.
+// Решение: шифруем данные быстрым AES, а сам AES-ключ — RSA.
+// Формат результата: base64(encryptedAesKey):iv:authTag:encryptedData
 // ============================================================
-export const decrypt = (encryptedText: string): string => {
-  const buffer = Buffer.from(encryptedText, 'base64'); // Base64 → бинарные данные
-  const decrypted = crypto.privateDecrypt(privateKey, buffer); // расшифровываем приватным ключом
-  return decrypted.toString('utf8'); // бинарные данные → строка UTF-8
+export const encryptLong = (text: string): string => {
+  const aesKey = crypto.randomBytes(32);          // случайный 256-битный AES ключ
+  const iv = crypto.randomBytes(12);              // 96-битный IV для GCM
+  const cipher = crypto.createCipheriv('aes-256-gcm', aesKey, iv);
+  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+  const authTag = cipher.getAuthTag();            // тег аутентификации GCM
+  const encryptedKey = crypto.publicEncrypt(publicKey, aesKey); // шифруем AES ключ RSA
+  return [
+    encryptedKey.toString('base64'),
+    iv.toString('base64'),
+    authTag.toString('base64'),
+    encrypted.toString('base64'),
+  ].join(':');
+};
+
+export const decryptLong = (encryptedText: string): string => {
+  // Обратная совместимость: старые записи зашифрованы чистым RSA (нет двоеточий)
+  if (!encryptedText.includes(':')) return decrypt(encryptedText);
+  const [encryptedKey, iv, authTag, data] = encryptedText.split(':');
+  const aesKey = crypto.privateDecrypt(privateKey, Buffer.from(encryptedKey, 'base64'));
+  const decipher = crypto.createDecipheriv('aes-256-gcm', aesKey, Buffer.from(iv, 'base64'));
+  decipher.setAuthTag(Buffer.from(authTag, 'base64'));
+  return Buffer.concat([decipher.update(Buffer.from(data, 'base64')), decipher.final()]).toString('utf8');
 };
 
 // ============================================================
