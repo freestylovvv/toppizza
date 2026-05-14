@@ -12,7 +12,7 @@ type Ingredient = {
   name: string
   price: number
   imageUrl: string
-  categories: string
+  categories: string // ID категорий через запятую ("1,3,5")
 }
 
 type SauceProduct = {
@@ -28,24 +28,29 @@ type Category = {
   products: any[]
 }
 
+// Пропсы HomeClient — все данные передаются с сервера (app/page.tsx)
 type HomeClientProps = {
-  categories: Category[]
-  banners: any[]
-  allIngredients: Ingredient[]
-  sauces: SauceProduct[]
-  combos: any[]
-  allProducts: any[]
+  categories: Category[]    // категории с товарами внутри
+  banners: any[]            // баннеры для карусели
+  allIngredients: Ingredient[] // все платные добавки (для ProductCard и ComboCard)
+  sauces: SauceProduct[]    // соусы — отдельная категория товаров
+  combos: any[]             // комбо-наборы
+  allProducts: any[]        // все товары (нужны ComboCard для поиска по productId)
 }
 
+// HomeClient — клиентская часть главной страницы
+// Получает данные от серверного компонента app/page.tsx через пропсы
 export default function HomeClient({ categories, banners, allIngredients, sauces, combos, allProducts }: HomeClientProps) {
   return (
     <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', paddingTop: '104px', position: 'relative' }}>
+      {/* Header получает список категорий для навигации.
+          Если есть комбо — добавляем "Комбо" первым пунктом с якорем #combos */}
       <Header categories={[
         ...(combos.length > 0 ? [{ id: -1, name: 'Комбо', anchor: 'combos' }] : []),
         ...categories,
       ]} />
 
-      {/* Левый декор — пальма */}
+      {/* Декоративный SVG слева — пальма, цветы, звёздочки */}
       <div className="side-deco side-deco-left" aria-hidden>
         <svg width="160" viewBox="0 0 160 1200" fill="none" preserveAspectRatio="xMidYMin meet" style={{width:'160px',height:'100%'}}>
           {/* Солнце вверху */}
@@ -143,7 +148,7 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
         </svg>
       </div>
 
-      {/* Правый декор — волны и цветы */}
+      {/* Декоративный SVG справа — волны, цветы, пузырьки */}
       <div className="side-deco side-deco-right" aria-hidden>
         <svg width="160" viewBox="0 0 160 1200" fill="none" preserveAspectRatio="xMidYMin meet" style={{width:'160px',height:'100%'}}>
           {/* Волны вверху */}
@@ -232,8 +237,10 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
       <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '16px' }}>
         <div style={{ flex: 1, minWidth: 0 }}>
 
+          {/* Карусель баннеров */}
           <BannerCarousel banners={banners} />
 
+          {/* Навигация по категориям (якорные ссылки) */}
           <nav style={{
             display: 'flex',
             gap: '8px',
@@ -251,6 +258,7 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
             ))}
           </nav>
 
+          {/* Секция комбо — показывается только если есть хотя бы одно комбо */}
           {combos.length > 0 && (
             <section id="combos" style={{ marginBottom: '40px' }}>
               <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '20px', color: '#000' }}>Комбо</h2>
@@ -262,17 +270,20 @@ export default function HomeClient({ categories, banners, allIngredients, sauces
             </section>
           )}
 
+          {/* Секции по категориям — каждая с якорем id={category.name} */}
           {categories.map((category) => (
             <section key={category.id} id={category.name} style={{ marginBottom: '40px' }}>
               <h2 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '20px', color: '#000' }}>{category.name}</h2>
               <div className="products-grid">
                 {category.products.map((product) => (
+                  // Соусы передаём только для пицц, закусок и комбо — не для напитков
                   <ProductCard key={product.id} product={product} allIngredients={allIngredients} sauces={['pizza','snack','combo'].includes(product.category?.type) ? sauces : []} />
                 ))}
               </div>
             </section>
           ))}
         </div>
+        {/* Корзина — фиксированная боковая панель */}
         <Cart />
       </main>
       <Footer />

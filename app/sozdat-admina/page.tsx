@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
+// Страница для назначения себя администратором
+// Доступна любому авторизованному пользователю — защита на уровне логики (первый запуск)
 export default function CreateAdminPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -10,6 +12,7 @@ export default function CreateAdminPage() {
   const [message, setMessage] = useState('')
 
   useEffect(() => {
+    // Если не авторизован — редиректим на главную
     const savedUser = localStorage.getItem('user')
     if (!savedUser) {
       router.push('/')
@@ -34,8 +37,10 @@ export default function CreateAdminPage() {
       const data = await res.json()
 
       if (data.success) {
+        // Обновляем пользователя в localStorage с флагом isAdmin: true
         localStorage.setItem('user', JSON.stringify(data.user))
         setMessage('Вы успешно стали администратором!')
+        // Через 2 секунды редиректим в админку
         setTimeout(() => router.push('/admin'), 2000)
       } else {
         setMessage('Ошибка при назначении администратора')
@@ -52,6 +57,7 @@ export default function CreateAdminPage() {
   return (
     <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px' }}>
       <div style={{ backgroundColor: '#fff', borderRadius: '24px', padding: '48px', maxWidth: '500px', width: '100%', textAlign: 'center' }}>
+        {/* SVG иконка пользователя */}
         <svg width="80" height="80" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ margin: '0 auto 24px' }}>
           <circle cx="20" cy="20" r="20" fill="#ff6900"/>
           <path d="M20 10C14.5 10 10 14.5 10 20C10 25.5 14.5 30 20 30C25.5 30 30 25.5 30 20C30 14.5 25.5 10 20 10ZM20 12C21.1 12 22 12.9 22 14C22 15.1 21.1 16 20 16C18.9 16 18 15.1 18 14C18 12.9 18.9 12 20 12ZM24 24H16C16 21.8 17.8 20 20 20C22.2 20 24 21.8 24 24Z" fill="white"/>
@@ -62,6 +68,7 @@ export default function CreateAdminPage() {
           Вы вошли как <strong>{user.name}</strong> ({user.email})
         </p>
 
+        {/* Сообщение об успехе (зелёное) или ошибке (красное) */}
         {message && (
           <div style={{ 
             padding: '16px', 

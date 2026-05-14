@@ -1,3 +1,5 @@
+// Скелетон загрузки главной страницы — показывается пока серверный компонент app/page.tsx
+// получает данные из БД. Next.js автоматически использует этот файл как Suspense fallback.
 export default function Loading() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', flexDirection: 'column', gap: '16px' }}>

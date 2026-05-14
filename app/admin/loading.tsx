@@ -1,3 +1,4 @@
+// Скелетон загрузки админ-панели
 export default function AdminLoading() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', flexDirection: 'column', gap: '16px' }}>

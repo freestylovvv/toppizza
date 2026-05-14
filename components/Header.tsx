@@ -4,20 +4,23 @@ import { useState, useEffect } from 'react'
 import AuthModal from './AuthModal'
 import { useRouter } from 'next/navigation'
 
+// Пропсы Header — опциональный список категорий для навигации
 type HeaderProps = {
   categories?: { id: number; name: string; anchor?: string }[]
 }
 
 export default function Header({ categories = [] }: HeaderProps) {
   const router = useRouter()
-  const [user, setUser] = useState<any>(null)
-  const [showAuth, setShowAuth] = useState(false)
-  const [cartCount, setCartCount] = useState(0)
+  const [user, setUser] = useState<any>(null)       // авторизованный пользователь из localStorage
+  const [showAuth, setShowAuth] = useState(false)   // показывать ли модалку авторизации
+  const [cartCount, setCartCount] = useState(0)     // количество товаров в корзине (для бейджа)
 
   useEffect(() => {
+    // Загружаем пользователя из localStorage при монтировании
     const savedUser = localStorage.getItem('user')
     if (savedUser) setUser(JSON.parse(savedUser))
     
+    // Считаем количество товаров в корзине (сумма quantity всех позиций)
     const updateCartCount = () => {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]')
       const count = cart.reduce((sum: number, item: any) => sum + item.quantity, 0)
@@ -25,10 +28,12 @@ export default function Header({ categories = [] }: HeaderProps) {
     }
     
     updateCartCount()
+    // Слушаем кастомное событие cartUpdated — диспатчится при изменении корзины
     window.addEventListener('cartUpdated', updateCartCount)
     return () => window.removeEventListener('cartUpdated', updateCartCount)
   }, [])
 
+  // Выход: удаляем пользователя из localStorage и редиректим на главную
   const handleLogout = () => {
     localStorage.removeItem('user')
     setUser(null)
@@ -37,6 +42,7 @@ export default function Header({ categories = [] }: HeaderProps) {
 
   return (
     <>
+      {/* Шапка с эффектом frosted glass (backdrop-filter) */}
       <header style={{
         background: 'rgba(255, 255, 255, 0.15)',
         backdropFilter: 'blur(24px) saturate(180%) brightness(1.1)',
@@ -54,6 +60,7 @@ export default function Header({ categories = [] }: HeaderProps) {
           margin: '0 auto',
           padding: '0 16px',
         }}>
+          {/* Верхняя строка: логотип + кнопки авторизации */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -62,6 +69,7 @@ export default function Header({ categories = [] }: HeaderProps) {
             borderBottom: '1px solid rgba(240, 240, 240, 0.8)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
+              {/* Логотип — SVG пицца + название, клик ведёт на главную */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => router.push('/')}>
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="20" cy="20" r="18" fill="#ff6900"/>
@@ -78,9 +86,12 @@ export default function Header({ categories = [] }: HeaderProps) {
                 <span style={{ fontSize: '24px', fontWeight: '700', color: '#000' }}>Top Pizza</span>
               </div>
             </div>
+
+            {/* Кнопки: если авторизован — имя + выход (+ кнопка админки для админов), иначе — войти */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               {user ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  {/* Кнопка "Админ панель" — только для isAdmin === true */}
                   {user.isAdmin && (
                     <button
                       onClick={() => router.push('/admin')}
@@ -101,6 +112,7 @@ export default function Header({ categories = [] }: HeaderProps) {
                       Админ панель
                     </button>
                   )}
+                  {/* Кнопка с именем — ведёт в профиль */}
                   <button
                     onClick={() => router.push('/profil')}
                     style={{
@@ -161,8 +173,10 @@ export default function Header({ categories = [] }: HeaderProps) {
             </div>
           </div>
           
+          {/* Нижняя строка шапки: навигация по категориям + кнопка "Акции" */}
           <div className="header-categories">
             <nav style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, overflowX: 'auto' }}>
+              {/* Ссылки-якоря на секции каталога (href="#Пиццы" и т.д.) */}
               {categories.map((cat) => (
                 <a
                   key={cat.id}
@@ -206,6 +220,7 @@ export default function Header({ categories = [] }: HeaderProps) {
           </div>
         </div>
       </header>
+      {/* Модалка авторизации — монтируется всегда, показывается по isOpen */}
       <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} onSuccess={setUser} />
     </>
   )

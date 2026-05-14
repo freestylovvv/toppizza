@@ -3,11 +3,15 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
+// Страница успешной оплаты — открывается после редиректа от ЮКассы
+// URL: /oformlenie/uspeh (return_url в api/oplata/sozdat)
 export default function SuccessPage() {
   const router = useRouter()
 
   useEffect(() => {
+    // Очищаем корзину после успешной оплаты
     localStorage.removeItem('cart')
+    // Уведомляем Header и Cart об изменении корзины
     window.dispatchEvent(new Event('cartUpdated'))
   }, [])
 

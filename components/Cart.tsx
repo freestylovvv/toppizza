@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 
+// AddressMap грузим динамически — Leaflet не работает на сервере (SSR: false)
 const AddressMap = dynamic(() => import('./AddressMap'), { ssr: false })
 
+// Обычный товар в корзине
 type RegularItem = {
   isCombo?: false
   productId: number
@@ -16,6 +18,7 @@ type RegularItem = {
   imageUrl: string
 }
 
+// Комбо-набор в корзине — хранит итоговую цену со скидкой и список товаров
 type ComboItem = {
   isCombo: true
   comboId: number
@@ -36,6 +39,7 @@ export default function Cart() {
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
+    // Загружаем корзину из localStorage
     const loadCart = () => {
       const savedCart = JSON.parse(localStorage.getItem('cart') || '[]')
       setCart(savedCart)
@@ -43,7 +47,9 @@ export default function Cart() {
     const savedUser = localStorage.getItem('user')
     if (savedUser) setUser(JSON.parse(savedUser))
     loadCart()
+    // cartUpdated — диспатчится при добавлении/удалении товара
     window.addEventListener('cartUpdated', loadCart)
+    // openCart — диспатчится из других компонентов для открытия корзины
     window.addEventListener('openCart', () => setIsOpen(true))
     return () => {
       window.removeEventListener('cartUpdated', loadCart)
@@ -51,6 +57,7 @@ export default function Cart() {
     }
   }, [])
 
+  // Изменяем количество товара; при quantity=0 — удаляем из корзины
   const updateQuantity = (index: number, delta: number) => {
     const newCart = cart.map((item, i) =>
       i === index ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item

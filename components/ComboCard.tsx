@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
+// Типы данных для ComboCard
 type Variant = { id: number; size: string; price: number }
 type Product = {
   id: number; name: string; imageUrl: string
@@ -11,10 +12,11 @@ type Product = {
   variants: Variant[]
 }
 type Ingredient = { id: number; name: string; price: number; imageUrl: string; categories: string }
+// Конфигурация одного товара внутри комбо (выбранный вариант + добавки/убранные ингредиенты)
 type ComboItemConfig = {
   productId: number; variantId: number
   removedIngredients: string[]; addedIngredients: string[]
-  price: number
+  price: number // цена с учётом варианта и добавок
 }
 type Combo = {
   id: number; name: string; imageUrl: string; discount: number
@@ -27,18 +29,22 @@ export default function ComboCard({
   combo: Combo; products: Product[]; allIngredients: Ingredient[]
 }) {
   const [showModal, setShowModal] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [step, setStep] = useState(0)
+  const [mounted, setMounted] = useState(false) // нужен для createPortal (SSR защита)
+  const [step, setStep] = useState(0)           // текущий шаг настройки (индекс товара в комбо)
   const [isHovered, setIsHovered] = useState(false)
-  const [configs, setConfigs] = useState<ComboItemConfig[]>([])
+  const [configs, setConfigs] = useState<ComboItemConfig[]>([]) // конфигурация каждого товара
 
-  useEffect(() => { setMounted(true) }, [])
+  useEffect(() => { setMounted(true) }, []) // разрешаем portal только на клиенте
 
+  // Находим объекты Product для каждой позиции комбо
   const comboProducts = combo.items.map(item => products.find(p => p.id === item.productId)).filter(Boolean) as Product[]
 
+  // Сумма всех товаров без скидки
   const baseTotal = configs.reduce((sum, c) => sum + c.price, 0)
+  // Итоговая цена со скидкой (не меньше 0)
   const finalPrice = Math.max(0, baseTotal - combo.discount)
 
+  // Открываем модалку: инициализируем configs дефолтными вариантами (средний или первый)
   const openModal = () => {
     const initial: ComboItemConfig[] = combo.items.map(item => {
       const product = products.find(p => p.id === item.productId)
@@ -56,10 +62,12 @@ export default function ComboCard({
     setShowModal(true)
   }
 
+  // Обновляем конфигурацию конкретного товара в комбо (иммутабельно)
   const updateConfig = (idx: number, patch: Partial<ComboItemConfig>) => {
     setConfigs(prev => prev.map((c, i) => i === idx ? { ...c, ...patch } : c))
   }
 
+  // Добавляем всё комбо в корзину одной записью
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]')
     cart.push({

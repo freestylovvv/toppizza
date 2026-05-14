@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+// Страница 404 — показывается при переходе на несуществующий URL
 export default function NotFound() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f9f9f9' }}>

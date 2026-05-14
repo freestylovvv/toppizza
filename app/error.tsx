@@ -3,10 +3,13 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
+// Глобальный обработчик ошибок Next.js
+// error — объект ошибки, reset — функция повторной попытки рендера
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter()
 
   useEffect(() => {
+    // Логируем ошибку в консоль (на проде можно заменить на Sentry и т.п.)
     console.error(error)
   }, [error])
 
@@ -16,6 +19,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
         <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '12px' }}>Что-то пошло не так</h2>
         <p style={{ fontSize: '16px', color: '#6b6b6b', marginBottom: '24px' }}>Не удалось загрузить страницу. Попробуйте ещё раз.</p>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          {/* reset() — повторно рендерит компонент без перезагрузки страницы */}
           <button
             onClick={reset}
             style={{ padding: '12px 24px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', cursor: 'pointer' }}

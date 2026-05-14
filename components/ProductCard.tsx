@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
+// Типы данных для ProductCard
 type Variant = {
   id: number
   size: string
@@ -36,25 +37,29 @@ type SauceProduct = {
   price: number
 }
 
+// Неиспользуемые базовые ингредиенты (оставлены для будущего использования)
 const BASE_INGREDIENTS = ['Моцарелла', 'Томатный соус', 'Итальянские травы']
 
 export default function ProductCard({ product, allIngredients = [], sauces = [] }: { product: Product; allIngredients?: Ingredient[]; sauces?: SauceProduct[] }) {
+  // По умолчанию выбираем средний вариант (индекс 1), если есть хотя бы 2 варианта
   const middleVariant = product.variants.length > 1 ? product.variants[1] : product.variants[0]
   const [selectedVariant, setSelectedVariant] = useState(middleVariant)
   const [isHovered, setIsHovered] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [removedIngredients, setRemovedIngredients] = useState<string[]>([])
-  const [addedIngredients, setAddedIngredients] = useState<string[]>([])
+  const [isMobile, setIsMobile] = useState(false)   // адаптив: одна колонка на мобильных
+  const [mounted, setMounted] = useState(false)     // защита от SSR для createPortal
+  const [removedIngredients, setRemovedIngredients] = useState<string[]>([])  // убранные ингредиенты
+  const [addedIngredients, setAddedIngredients] = useState<string[]>([])      // добавленные платные добавки
+  // Парсим строки ингредиентов в массивы
   const productIngredients = product.ingredients ? product.ingredients.split(',').map(i => i.trim()) : []
   const requiredIngredients = product.requiredIngredients ? product.requiredIngredients.split(',').map(i => i.trim()) : []
   const removableIngredients = product.removableIngredients ? product.removableIngredients.split(',').map(i => i.trim()) : []
 
+  // Фильтруем добавки по categoryId товара
   const extraIngredients = allIngredients.filter(ing =>
     ing.categories.split(',').includes(String(product.categoryId))
   )
-  const [selectedSauces, setSelectedSauces] = useState<number[]>([])
+  const [selectedSauces, setSelectedSauces] = useState<number[]>([]) // выбранные соусы (ID)
 
   useEffect(() => {
     if (!selectedVariant && product.variants.length > 0) {
@@ -67,6 +72,7 @@ export default function ProductCard({ product, allIngredients = [], sauces = [] 
     return () => window.removeEventListener('resize', handleResize)
   }, [product.variants, selectedVariant])
   
+  // Размер картинки в модалке зависит от выбранного размера пиццы
   const getImageSize = () => {
     if (!selectedVariant) return '280px'
     const s = selectedVariant.size.toLowerCase()
