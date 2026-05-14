@@ -1,4 +1,9 @@
-// Скелетон загрузки страницы профиля
+// ============================================================
+// СКЕЛЕТОН ЗАГРУЗКИ ПРОФИЛЯ
+//
+// Показывается пока страница профиля загружается.
+// Next.js автоматически использует этот файл как Suspense fallback.
+// ============================================================
 export default function Loading() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', flexDirection: 'column', gap: '16px' }}>

@@ -1,4 +1,10 @@
-// Скелетон загрузки админ-панели
+// ============================================================
+// СКЕЛЕТОН ЗАГРУЗКИ АДМИН-ПАНЕЛИ
+//
+// Next.js автоматически показывает этот компонент показывает пока серверный
+// компонент app/admin/page.tsx загружает данные из БД.
+// Файл loading.tsx в папке автоматически становится Suspense fallback.
+// ============================================================
 export default function AdminLoading() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', flexDirection: 'column', gap: '16px' }}>
