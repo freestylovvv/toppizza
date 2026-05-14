@@ -108,6 +108,34 @@ export default function ProfilePage() {
     setLoading(false)
   }
 
+  // Цвет и текст бейджа статуса заказа
+  const statusInfo: Record<string, { label: string; color: string; bg: string }> = {
+    pending:    { label: 'Ожидает',    color: '#856404', bg: '#fff3cd' },
+    processing: { label: 'Готовится', color: '#084298', bg: '#cfe2ff' },
+    completed:  { label: 'Выполнен',  color: '#0a3622', bg: '#d1e7dd' },
+    delivered:  { label: 'Доставлен', color: '#0a3622', bg: '#d4edda' },
+    cancelled:  { label: 'Отменён',   color: '#842029', bg: '#f8d7da' },
+  }
+
+  // Повторить заказ — добавляем все товары в корзину
+  const repeatOrder = (order: any) => {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    order.items.forEach((item: any) => {
+      cart.push({
+        productId: item.productId,
+        variantId: item.variantId,
+        name: item.productName,
+        size: item.variantSize,
+        price: item.price,
+        quantity: item.quantity,
+        imageUrl: item.imageUrl,
+      })
+    })
+    localStorage.setItem('cart', JSON.stringify(cart))
+    window.dispatchEvent(new Event('cartUpdated'))
+    router.push('/')
+  }
+
   if (!user) return null
 
   return (
@@ -318,8 +346,27 @@ export default function ProfilePage() {
                     <p style={{ fontSize: '14px', color: '#6b6b6b', marginTop: '4px' }}>
                       {new Date(order.createdAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </p>
+                    {/* Адрес доставки */}
+                    <p style={{ fontSize: '13px', color: '#6b6b6b', marginTop: '4px' }}>📍 {order.address}</p>
+                    {/* Бейдж статуса */}
+                    <span style={{
+                      display: 'inline-block', marginTop: '8px',
+                      padding: '4px 10px', borderRadius: '6px', fontSize: '13px', fontWeight: '600',
+                      color: (statusInfo[order.status] || statusInfo.pending).color,
+                      backgroundColor: (statusInfo[order.status] || statusInfo.pending).bg,
+                    }}>
+                      {(statusInfo[order.status] || statusInfo.pending).label}
+                    </span>
                   </div>
-                  <span style={{ fontSize: '24px', fontWeight: '700', color: '#ff6900' }}>{order.totalPrice} ₽</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                    <span style={{ fontSize: '24px', fontWeight: '700', color: '#ff6900' }}>{order.totalPrice} ₽</span>
+                    <button
+                      onClick={() => repeatOrder(order)}
+                      style={{ padding: '8px 16px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600', whiteSpace: 'nowrap' }}
+                    >
+                      Повторить заказ
+                    </button>
+                  </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
                   {order.items.map((item: any) => (
