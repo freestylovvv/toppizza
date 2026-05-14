@@ -3,8 +3,20 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-// Страница успешной оплаты — открывается после редиректа от ЮКассы
-// URL: /oformlenie/uspeh (return_url в api/oplata/sozdat)
+// ============================================================
+// СТРАНИЦА УСПЕШНОЙ ОПЛАТЫ
+//
+// Открывается после редиректа от ЮКассы после успешной оплаты.
+// URL указан в return_url при создании платежа (в api/oplata/sozdat).
+//
+// Что происходит на этой странице:
+// 1. Очищаем корзину из localStorage
+// 2. Показываем сообщение об успехе
+// 3. Предлагаем вернуться на главную
+//
+// Сам заказ уже создан в БД со статусом pending_payment
+// и будет подтверждён через вебхук (в api/oplata/vebhuk).
+// ============================================================
 export default function SuccessPage() {
   const router = useRouter()
 
@@ -12,6 +24,7 @@ export default function SuccessPage() {
     // Очищаем корзину после успешной оплаты
     localStorage.removeItem('cart')
     // Уведомляем Header и Cart об изменении корзины
+    // dispatchEvent — генерируем кастомное событие, на которое подписаны компоненты
     window.dispatchEvent(new Event('cartUpdated'))
   }, [])
 
