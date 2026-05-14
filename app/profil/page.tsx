@@ -117,18 +117,45 @@ export default function ProfilePage() {
     cancelled:  { label: 'Отменён',   color: '#842029', bg: '#f8d7da' },
   }
 
-  // Повторить заказ — добавляем все товары в корзину
+  // Повторить заказ — комбо добавляем целиком, обычные товары по одному
   const repeatOrder = (order: any) => {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    // Группируем позиции по comboId
+    const comboGroups: Record<number, any[]> = {}
+    const regularItems: any[] = []
     order.items.forEach((item: any) => {
+      if (item.comboId) {
+        if (!comboGroups[item.comboId]) comboGroups[item.comboId] = []
+        comboGroups[item.comboId].push(item)
+      } else {
+        regularItems.push(item)
+      }
+    })
+    // Добавляем комбо целиком
+    Object.entries(comboGroups).forEach(([comboId, comboItems]) => {
+      const first = comboItems[0]
       cart.push({
-        productId: item.productId,
-        variantId: item.variantId,
-        name: item.productName,
-        size: item.variantSize,
-        price: item.price,
-        quantity: item.quantity,
-        imageUrl: item.imageUrl,
+        isCombo: true,
+        comboId: parseInt(comboId),
+        comboName: first.comboName,
+        comboImageUrl: first.imageUrl,
+        discount: 0,
+        totalPrice: comboItems.reduce((s: number, i: any) => s + i.price, 0),
+        finalPrice: comboItems.reduce((s: number, i: any) => s + i.price, 0),
+        quantity: first.quantity,
+        items: comboItems.map((i: any) => ({
+          productId: i.productId, variantId: i.variantId,
+          name: i.productName, size: i.variantSize,
+          price: i.price, imageUrl: i.imageUrl,
+        })),
+      })
+    })
+    // Добавляем обычные товары
+    regularItems.forEach((item: any) => {
+      cart.push({
+        productId: item.productId, variantId: item.variantId,
+        name: item.productName, size: item.variantSize,
+        price: item.price, quantity: item.quantity, imageUrl: item.imageUrl,
       })
     })
     localStorage.setItem('cart', JSON.stringify(cart))
@@ -369,18 +396,50 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
-                  {order.items.map((item: any) => (
-                    <div key={item.id} style={{ display: 'flex', gap: '12px', padding: '12px', backgroundColor: '#f9f9f9', borderRadius: '12px' }}>
-                      {item.imageUrl && (
-                        <img src={item.imageUrl} alt={item.productName} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />
-                      )}
-                      <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: '14px', fontWeight: '600', color: '#000', marginBottom: '4px' }}>{item.productName || 'Товар'}</p>
-                        <p style={{ fontSize: '13px', color: '#6b6b6b', marginBottom: '4px' }}>{item.variantSize || ''}</p>
-                        <p style={{ fontSize: '14px', fontWeight: '600', color: '#ff6900' }}>{item.price} ₽ × {item.quantity}</p>
-                      </div>
-                    </div>
-                  ))}
+                  {/* Группируем позиции: сначала комбо, потом обычные */}
+                  {(() => {
+                    const combos: Record<number, any[]> = {}
+                    const regular: any[] = []
+                    order.items.forEach((item: any) => {
+                      if (item.comboId) {
+                        if (!combos[item.comboId]) combos[item.comboId] = []
+                        combos[item.comboId].push(item)
+                      } else regular.push(item)
+                    })
+                    return (
+                      <>
+                        {Object.entries(combos).map(([comboId, comboItems]) => (
+                          <div key={`combo-${comboId}`} style={{ gridColumn: '1 / -1', padding: '12px', backgroundColor: '#fff5e1', borderRadius: '12px', border: '1px solid #ffd580' }}>
+                            <div style={{ fontSize: '13px', fontWeight: '700', color: '#ff6900', marginBottom: '8px' }}>🍕 {comboItems[0].comboName || 'Комбо'}</div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                              {comboItems.map((item: any) => (
+                                <div key={item.id} style={{ display: 'flex', gap: '8px', alignItems: 'center', backgroundColor: '#fff', padding: '8px', borderRadius: '8px' }}>
+                                  {item.imageUrl && <img src={item.imageUrl} alt={item.productName} style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '6px' }} />}
+                                  <div>
+                                    <p style={{ fontSize: '13px', fontWeight: '600', color: '#000' }}>{item.productName}</p>
+                                    <p style={{ fontSize: '12px', color: '#6b6b6b' }}>{item.variantSize}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            <p style={{ fontSize: '13px', fontWeight: '600', color: '#ff6900', marginTop: '8px' }}>
+                              {comboItems.reduce((s: number, i: any) => s + i.price, 0)} ₽ × {comboItems[0].quantity}
+                            </p>
+                          </div>
+                        ))}
+                        {regular.map((item: any) => (
+                          <div key={item.id} style={{ display: 'flex', gap: '12px', padding: '12px', backgroundColor: '#f9f9f9', borderRadius: '12px' }}>
+                            {item.imageUrl && <img src={item.imageUrl} alt={item.productName} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />}
+                            <div style={{ flex: 1 }}>
+                              <p style={{ fontSize: '14px', fontWeight: '600', color: '#000', marginBottom: '4px' }}>{item.productName || 'Товар'}</p>
+                              <p style={{ fontSize: '13px', color: '#6b6b6b', marginBottom: '4px' }}>{item.variantSize || ''}</p>
+                              <p style={{ fontSize: '14px', fontWeight: '600', color: '#ff6900' }}>{item.price} ₽ × {item.quantity}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </>
+                    )
+                  })()}
                 </div>
               </div>
             ))}

@@ -291,6 +291,12 @@ model OrderItem {
 
   // imageUrl — URL картинки товара на момент заказа
   imageUrl    String  @default("")
+
+  // comboId — ID комбо если позиция является частью комбо-набора (null для обычных товаров)
+  comboId     Int?
+
+  // comboName — название комбо на момент заказа
+  comboName   String  @default("")
 }
 
 // ============================================================
