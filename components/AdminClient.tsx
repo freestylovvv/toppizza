@@ -48,7 +48,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
   const [navigating, setNavigating] = useState(false)
 
   useEffect(() => {
-    fetch('/api/admin/combos').then(r => r.text()).then(t => { try { const d = JSON.parse(t); if (d.success) setCombos(d.combos) } catch {} })
+    fetch('/api/admin/kombo').then(r => r.text()).then(t => { try { const d = JSON.parse(t); if (d.success) setCombos(d.combos) } catch {} })
   }, [])
 
   useEffect(() => {
@@ -67,13 +67,13 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
 
   const loadData = async () => {
     const [usersRes, codesRes, productsRes, categoriesRes, ordersRes, ingredientsRes, bannersRes] = await Promise.all([
-      fetch('/api/admin/users'),
-      fetch('/api/admin/codes'),
-      fetch('/api/admin/products'),
-      fetch('/api/admin/categories'),
-      fetch('/api/admin/orders'),
-      fetch('/api/admin/ingredients'),
-      fetch('/api/admin/banners'),
+      fetch('/api/admin/polzovateli'),
+      fetch('/api/admin/kody'),
+      fetch('/api/admin/tovary'),
+      fetch('/api/admin/kategorii'),
+      fetch('/api/admin/zakazy'),
+      fetch('/api/admin/ingredienty'),
+      fetch('/api/admin/bannery'),
     ])
     
     const usersData = await usersRes.json()
@@ -91,13 +91,13 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
     if (ordersData.success) setOrders(ordersData.orders)
     if (ingredientsData.success) setIngredients(ingredientsData.ingredients)
     if (bannersData.success) setBanners(bannersData.banners)
-    const combosRes = await fetch('/api/admin/combos')
+    const combosRes = await fetch('/api/admin/kombo')
     const combosData = await combosRes.json()
     if (combosData.success) setCombos(combosData.combos)
   }
 
   const toggleAdmin = async (userId: number, isAdmin: boolean) => {
-    const res = await fetch('/api/admin/make-admin', {
+    const res = await fetch('/api/admin/sdelat-adminom', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, isAdmin: !isAdmin }),
@@ -163,7 +163,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
       
       console.log('Saving product:', data)
 
-      const res = await fetch('/api/admin/products', {
+      const res = await fetch('/api/admin/tovary', {
         method: editingProduct ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -195,7 +195,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
 
-    const res = await fetch('/api/admin/categories', {
+    const res = await fetch('/api/admin/kategorii', {
       method: editingCategory ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -229,7 +229,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
       } else if (!editingProduct) {
         setAlertMessage('Выберите изображение'); setUploading(false); return
       }
-      const res = await fetch('/api/admin/combos', {
+      const res = await fetch('/api/admin/kombo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -257,7 +257,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
     setConfirmData({
       message: 'Удалить товар?',
       onConfirm: async () => {
-        const res = await fetch(`/api/admin/products?id=${id}`, { method: 'DELETE' })
+        const res = await fetch(`/api/admin/tovary?id=${id}`, { method: 'DELETE' })
         if (res.ok) loadData()
         setConfirmData(null)
       }
@@ -268,7 +268,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
     setConfirmData({
       message: 'Удалить категорию?',
       onConfirm: async () => {
-        const res = await fetch(`/api/admin/categories?id=${id}`, { method: 'DELETE' })
+        const res = await fetch(`/api/admin/kategorii?id=${id}`, { method: 'DELETE' })
         if (res.ok) loadData()
         setConfirmData(null)
       }
@@ -276,7 +276,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
   }
 
   const updateOrderStatus = async (orderId: number, status: string) => {
-    const res = await fetch('/api/admin/orders', {
+    const res = await fetch('/api/admin/zakazy', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ orderId, status }),
@@ -311,7 +311,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
 
       const selectedCategories = Array.from(formData.getAll('categories')).join(',')
 
-      const res = await fetch('/api/admin/ingredients', {
+      const res = await fetch('/api/admin/ingredienty', {
         method: editingIngredient ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -341,7 +341,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
     setConfirmData({
       message: 'Удалить ингредиент?',
       onConfirm: async () => {
-        const res = await fetch(`/api/admin/ingredients?id=${id}`, { method: 'DELETE' })
+        const res = await fetch(`/api/admin/ingredienty?id=${id}`, { method: 'DELETE' })
         if (res.ok) loadData()
         setConfirmData(null)
       }
@@ -352,7 +352,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
     setConfirmData({
       message: 'Удалить баннер?',
       onConfirm: async () => {
-        const res = await fetch(`/api/admin/banners?id=${id}`, { method: 'DELETE' })
+        const res = await fetch(`/api/admin/bannery?id=${id}`, { method: 'DELETE' })
         if (res.ok) loadData()
         setConfirmData(null)
       }
@@ -381,7 +381,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
         setUploading(false)
         return
       }
-      const res = await fetch('/api/admin/banners', {
+      const res = await fetch('/api/admin/bannery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageUrl: uploadData.url, title: '', subtitle: '' }),
@@ -644,7 +644,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
                         setImageFile(null)
                         setShowComboForm(true)
                       }} style={{ flex: 1, padding: '8px', backgroundColor: '#f0f0f0', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Изменить</button>
-                      <button onClick={() => setConfirmData({ message: 'Удалить комбо?', onConfirm: async () => { await fetch(`/api/admin/combos?id=${combo.id}`, { method: 'DELETE' }); loadData(); setConfirmData(null); } })} style={{ flex: 1, padding: '8px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Удалить</button>
+                      <button onClick={() => setConfirmData({ message: 'Удалить комбо?', onConfirm: async () => { await fetch(`/api/admin/kombo?id=${combo.id}`, { method: 'DELETE' }); loadData(); setConfirmData(null); } })} style={{ flex: 1, padding: '8px', backgroundColor: '#ff6900', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '13px' }}>Удалить</button>
                     </div>
                   </div>
                 )
@@ -689,7 +689,7 @@ export default function AdminClient({ initialUsers, initialCodes, initialProduct
                     if (!d.success) { setAlertMessage('Ошибка загрузки изображения'); setUploading(false); return }
                     imageUrl = d.url
                   } else if (!editingCombo) { setAlertMessage('Выберите изображение'); setUploading(false); return }
-                  const res = await fetch('/api/admin/combos', {
+                  const res = await fetch('/api/admin/kombo', {
                     method: editingCombo ? 'PUT' : 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: editingCombo?.id, name: formData.get('name'), imageUrl, discount: parseInt(formData.get('discount') as string) || 0, items: comboItems.map(i => ({ productId: i.productId, variantId: i.variantId })) }),
