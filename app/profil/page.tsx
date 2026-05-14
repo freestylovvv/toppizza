@@ -138,7 +138,7 @@ export default function ProfilePage() {
         isCombo: true,
         comboId: parseInt(comboId),
         comboName: first.comboName,
-        comboImageUrl: first.imageUrl,
+        comboImageUrl: first.comboImageUrl,
         discount: 0,
         totalPrice: comboItems.reduce((s: number, i: any) => s + i.price, 0),
         finalPrice: comboItems.reduce((s: number, i: any) => s + i.price, 0),

@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     for (const item of items) {
       if (item.isCombo && Array.isArray(item.items)) {
         for (const ci of item.items) {
-          flatItems.push({ ...ci, quantity: item.quantity, price: ci.price, comboId: item.comboId, comboName: item.comboName || '' })
+          flatItems.push({ ...ci, quantity: item.quantity, price: ci.price, comboId: item.comboId, comboName: item.comboName || '', comboImageUrl: item.comboImageUrl || '' })
         }
       } else {
         flatItems.push(item)
@@ -125,6 +125,7 @@ export async function POST(request: Request) {
             imageUrl:    sanitizeInput(item.imageUrl || ''),
             comboId:     item.comboId ? parseInt(item.comboId) : null,
             comboName:   sanitizeInput(item.comboName || ''),
+            comboImageUrl: sanitizeInput(item.comboImageUrl || ''),
           })),
         },
       },

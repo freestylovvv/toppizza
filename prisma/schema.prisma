@@ -297,6 +297,7 @@ model OrderItem {
 
   // comboName — название комбо на момент заказа
   comboName   String  @default("")
+  comboImageUrl String  @default("")
 }
 
 // ============================================================
