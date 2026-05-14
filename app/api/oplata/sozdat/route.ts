@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
+import { prisma } from '@/lib/prisma'
+import { sanitizeInput, encrypt } from '@/lib/security'
 // uuid — библиотека для генерации уникальных идентификаторов
 // v4 — версия 4 (случайный UUID), пример: "550e8400-e29b-41d4-a716-446655440000"
 
@@ -89,13 +91,40 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'Payment creation failed' }, { status: 400 })
     }
 
-    // Возвращаем фронтенду ссылку для редиректа
+    // Создаём заказ в БД сразу, не дожидаясь вебхука
+    const { fullName, email, phone, address, comment, items, totalPrice } = orderData
+    const user = await prisma.user.findFirst({ where: { phone } })
+    await prisma.order.create({
+      data: {
+        fullName: sanitizeInput(fullName),
+        encryptedFullName: encrypt(sanitizeInput(fullName)),
+        email: sanitizeInput(email || ''),
+        encryptedEmail: email ? encrypt(sanitizeInput(email)) : null,
+        phone: sanitizeInput(phone),
+        encryptedPhone: encrypt(sanitizeInput(phone)),
+        address: sanitizeInput(address),
+        encryptedAddress: encrypt(sanitizeInput(address)),
+        comment: sanitizeInput(comment || ''),
+        totalPrice,
+        userId: user?.id ?? null,
+        items: {
+          create: items.map((item: any) => ({
+            productId:   parseInt(item.productId) || 0,
+            variantId:   parseInt(item.variantId) || 0,
+            quantity:    parseInt(item.quantity),
+            price:       parseInt(item.price),
+            productName: sanitizeInput(item.name || item.comboName || ''),
+            variantSize: sanitizeInput(item.size || 'Комбо'),
+            imageUrl:    sanitizeInput(item.imageUrl || item.comboImageUrl || ''),
+          })),
+        },
+      },
+    })
+
     return NextResponse.json({
       success: true,
       confirmationUrl: data.confirmation.confirmation_url,
-      // confirmation_url — ссылка на страницу оплаты ЮКасса
-      // Фронтенд делает: window.location.href = confirmationUrl
-      paymentId: data.id, // ID платежа (может понадобиться для отслеживания)
+      paymentId: data.id,
     })
   } catch (error) {
     console.error('Payment create error:', error)
